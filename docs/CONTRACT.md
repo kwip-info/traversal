@@ -1,6 +1,6 @@
 # Traversal execution contract
 
-Status: layers 1–3 implemented; history/reuse sections describe upcoming layers. Owner: Trevor Ewert / KWIP LLC.
+Status: layers 1–6 implemented and released as 0.1.0. Owner: Trevor Ewert / KWIP LLC.
 
 ## Scope
 
@@ -20,7 +20,7 @@ telemetry, calendar scheduler, connector catalog, distributed workers, or UI.
 - Data dependencies and ordering-only dependencies are distinct. Both constrain
   readiness; only data dependencies supply function arguments.
 - A node becomes ready only after all required dependencies succeed (including
-  explicitly accepted reused results in the later reuse layer).
+  explicitly accepted reused results).
 - Admission moves ready nodes to running at most once per attempt and never
   exceeds a positive concurrency limit. Automatic retries are off initially.
 - A completion updates direct dependents, without scanning the entire graph.
@@ -37,18 +37,18 @@ telemetry, calendar scheduler, connector catalog, distributed workers, or UI.
 - A Rust scheduler does not bypass the GIL for Python task bodies. Use async for
   awaitable work, threads for blocking I/O; process executors are deferred.
 
-## History and reuse (later layers)
+## History and reuse
 
 - Storage is opt-in at an explicit local path. No import-time directory creation,
   background daemon, network request, or task execution.
 - Run history stores graph identity/version, run IDs, node states, timestamps,
   and bounded diagnostics. Raw argument/result persistence is off by default;
-  errors can contain task data and need a documented redaction hook before release.
+  default diagnostics contain exception types only; an optional bounded formatter can redact additional details.
 - Queries distinguish latest attempt, latest success, and compatible reusable
   result. Wall-clock timestamps alone are insufficient ordering or identity.
 - The store must reject incompatible schema versions clearly. A disconnected
   reader must not mark another live process's run abandoned; run ownership and
-  liveness/recovery rules must be designed and crash-tested in layer 4.
+  liveness/recovery use OS file leases and are crash-tested.
 - A crash between an external effect and its success record leaves an unknown
   outcome. History cannot establish exactly-once effects.
 - Caching requires an explicit key/version contract and an available persisted

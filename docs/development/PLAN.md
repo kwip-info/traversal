@@ -11,7 +11,7 @@ Scope: free/MIT public library. On 2026-09-15 Trevor explicitly authorized compl
 | 3 | Python execution adapters and public API | Controlled real concurrency, joins, exceptions, cancellation, one real tool workflow | Complete |
 | 4 | Local SQLite history | History query semantics, concurrent access, crash recovery and ownership | Complete |
 | 5 | Explicit result reuse and resume | Key invalidation, missing/corrupt artifacts, unknown side effects | Complete |
-| 6 | Adoption and release readiness | Benchmarks, wheel matrix, fresh skill-led usage, documented limits | Planned |
+| 6 | Adoption and release readiness | Benchmarks, wheel matrix, fresh skill-led usage, documented limits | Complete |
 
 Before each layer, expand its phase file with decisions and behavioral tests.
 Do not implement later layers in the same change merely because scaffolding exists.
@@ -20,6 +20,4 @@ Update the canonical packaged skill in the same change as supported behavior.
 CI executes skill examples from the installed wheel. Public APIs do not appear in
 supported examples before implementation. Core tests must not require Python.
 
-Next checkpoint: graph-core implementation under PHASE_1.md.
-Investment checkpoint: after layer 3, demonstrate value on one real KWIP workflow
-as evidence for the already authorized persistence and launch work.
+Next checkpoint: maintain the released API and skill together; use adopter feedback to justify further scope. All six implementation layers and public distribution gates are complete.
