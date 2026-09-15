@@ -8,13 +8,37 @@ History was disabled. These are one-machine observations, not performance promis
 
 ## Eight-worker DAG results
 
-| Workload | Regular Python | Free-threaded Python | Free-threaded speedup vs its sequential baseline |
+Both timing columns use **eight Traversal workers**. Lower time is better.
+The last column compares these two columns directly: `(free-threaded / regular − 1) × 100`.
+Calculations use unrounded measurements.
+
+| Workload | Regular Python, 8 workers | Free-threaded Python, 8 workers | Change in elapsed time |
 | --- | ---: | ---: | ---: |
-| python_cpu | 274.5 ms | 80.2 ms | 3.09× |
-| native_cpu | 28.1 ms | 32.3 ms | 3.83× |
-| blocking_io | 51.2 ms | 50.4 ms | 7.69× |
-| tiny_nodes | 17.9 ms | 15.4 ms | 0.00× |
-| native_topology | 21.8 ms | 14.5 ms | 3.48× |
+| Python CPU | 274.5 ms | 80.2 ms | 70.8% less time |
+| Native CPU (OpenSSL) | 28.1 ms | 32.3 ms | 15.0% more time |
+| Blocking I/O | 51.2 ms | 50.4 ms | 1.5% less time |
+| Tiny nodes | 17.9 ms | 15.4 ms | 13.7% less time |
+| Native graph operations | 21.8 ms | 14.5 ms | 33.5% less time |
+
+Free-threading helped the Python CPU workload substantially. Native CPU was slower
+in this measurement; OpenSSL already releases the GIL on regular Python. The I/O
+difference is small and should not be treated as a demonstrated runtime advantage.
+
+### A separate comparison: threads versus sequential work
+
+The earlier table mixed the two-runtime timings with speedups against an unshown
+sequential baseline. For example, 3.09× meant **247.3 ms sequential / 80.2 ms DAG**
+on free-threaded Python. Comparing the displayed runtimes instead gives
+**274.5 ms / 80.2 ms = 3.42×** (using unrounded values).
+
+Similarly, the native CPU result was 3.83× faster than its own 123.9 ms sequential
+baseline, while still taking 15.0% longer than regular Python's eight-worker run.
+Both statements can be true because they compare different executions.
+
+For tiny nodes, direct sequential execution took only **0.0127 ms** on free-threaded
+Python, versus **15.4 ms** through the DAG. Scheduling cost about **1,215 times as
+much elapsed time** in that trivial workload. The old rounded “0.00×” hid this
+overhead; it did not mean zero execution time or no effect.
 
 The Python CPU workload used 16 independent modular-arithmetic loops of 500,000
 iterations followed by a sum. Eight free-threaded workers consumed about 6.9 CPU
