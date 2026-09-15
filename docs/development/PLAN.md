@@ -20,4 +20,4 @@ Update the canonical packaged skill in the same change as supported behavior.
 CI executes skill examples from the installed wheel. Public APIs do not appear in
 supported examples before implementation. Core tests must not require Python.
 
-Active release: [0.2.0 multicore qualification](RELEASE_0_2.md), authorized by Trevor on 2026-09-15. Preserve the completed six-layer scope; qualify free-threaded execution, native detachment, and distribution together.
+Released: [0.2.0 multicore qualification](RELEASE_0_2.md), authorized by Trevor on 2026-09-15. Free-threaded execution, native detachment, skill and distribution gates are complete. Use real workload profiles and adopter feedback to justify further changes.

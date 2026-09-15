@@ -1,6 +1,6 @@
 # Traversal 0.2.0: multicore qualification
 
-Owner: Trevor Ewert. Authorized 2026-09-15. Status: in progress.
+Owner: Trevor Ewert. Authorized 2026-09-15. Status: complete; published and production-verified.
 
 This release deepens the existing graph component. No process executor,
 distributed workers, task catalog, or scheduler service is introduced.
@@ -74,3 +74,27 @@ Evidence and outcomes are appended at each gate below.
   installation check and CPU example passed. No PyYAML runtime dependency added.
 - CI and release-wheel jobs select their interpreter explicitly; 3.14t jobs must
   pass the import/runtime GIL assertion. Cross-platform results recorded below.
+
+## Public release receipts
+
+- Release commit `55ccef83f0dd8a8e7b3f5d33667007e8a7a1d00a`, tag `v0.2.0`.
+- Exact-commit CI: https://github.com/kwip-info/traversal/actions/runs/34998630729
+  — all 15 interpreter/platform jobs, core and source build passed.
+- Publication: https://github.com/kwip-info/traversal/actions/runs/34998990723
+  — 15 actual release wheels tested, source archive checked, OIDC publish succeeded.
+- PyPI https://pypi.org/project/traversal/0.2.0/ has 15 wheels and one source archive,
+  including cp314t wheels for all three platforms.
+- Reinstalled the public PyPI macOS arm64 3.14t wheel using the explicit public
+  index: 44 tests passed; GIL stayed disabled. An initial default-index request
+  had not yet seen the version; no local wheel fallback was used for this check.
+- GitHub release: https://github.com/kwip-info/traversal/releases/tag/v0.2.0
+- Production https://kwip.info/technology/traversal/ serves 0.2.0, a flat multicore
+  diagram, and syntax-highlighted Python/shell examples. Site merge:
+  `447684e78640e6f0f247628891597f651f375a0f`.
+- Live skill ZIP SHA-256:
+  `3cb9af19f2447e69b4bde370291a06c0178d9b0eb662895dcf14f0ea501935fb`.
+  Every ZIP entry matches the packaged canonical skill. Old 0.1.0 download retained.
+
+All release gates complete. Future optimization should follow real workload
+profiles; process pools, distributed execution and async CPU offloading remain
+outside this release.
