@@ -11,4 +11,4 @@ Owner: Trevor Ewert / KWIP LLC. This repository owns Traversal implementation an
 - Keep planned APIs out of supported examples. Do not add placeholder Graph/run/cache methods.
 - Keep dependencies justified. No hosted services, telemetry, connector catalog, calendar scheduler, or distributed workers in this library.
 - Never commit run databases, arbitrary task data, credentials, build caches, or release archives.
-- GitHub setup and development pushes are authorized. Package publication and public release are separate actions.
+- Owner authorization on 2026-09-15 covers public GitHub, completion of all layers, PyPI prerelease/final distribution, and the kwip.info library page. Validate artifacts before each release.

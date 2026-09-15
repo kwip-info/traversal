@@ -18,3 +18,6 @@ provide exactly-once external effects or forcibly stop arbitrary running threads
 Calendar scheduling, connectors, distributed execution, dashboards, and task
 business logic are outside the component. The current package implements none
 of these planned graph semantics; consult the matching version's skill before use.
+
+Development milestone: Rust topology validation and target selection now pass
+layer 1 tests. These are internal Rust capabilities; no Python graph API exists yet.

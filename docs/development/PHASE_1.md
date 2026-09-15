@@ -1,6 +1,11 @@
 # Layer 1 — Rust graph core
 
-Status: planned; implement only after layer 0 is complete.
+Status: complete.
+
+Decisions: graph-local handles carry a builder identity; duplicate edges are idempotent.
+Compilation uses iterative Kahn ordering and reports the remaining cycle-involved
+subgraph by node name (which may include cycle descendants). Target closure is
+iterative. Compiled topology is independent of later builder mutations.
 
 ## Design to finalize before code
 
@@ -26,3 +31,10 @@ invariants against a simple independent reference implementation for generated D
 Record graph sizes and complexity; optimize only from evidence. Update the skill
 with implemented capabilities without promising execution. Record final API
 choices and test evidence here before marking the layer complete.
+
+## Evidence
+
+`cargo test --locked -p traversal-core`: 6 tests pass, including 50,000-node
+chain and 40 generated DAGs compared with a transitive-closure reference.
+Rust format and clippy pass. Public Python execution remains unavailable.
+Storage/selection cost is O(V+E); duplicate-edge detection uses a hash set.
