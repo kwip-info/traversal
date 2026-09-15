@@ -1,0 +1,14 @@
+[workspace]
+members = ["crates/traversal-core", "crates/traversal-python"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0-alpha.1"
+edition = "2021"
+rust-version = "1.83"
+license = "MIT"
+repository = "https://github.com/kwip-info/traversal"
+
+[workspace.dependencies]
+traversal-core = { path = "crates/traversal-core" }
+pyo3 = "=0.29.2"

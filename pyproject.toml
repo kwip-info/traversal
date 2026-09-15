@@ -1,0 +1,42 @@
+[build-system]
+requires = ["maturin>=1.14,<2"]
+build-backend = "maturin"
+
+[project]
+name = "traversal"
+version = "0.1.0a1"
+description = "Concurrent DAG execution for Python, powered by Rust (development scaffold)"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "KWIP LLC" }]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Rust",
+]
+
+[project.urls]
+Repository = "https://github.com/kwip-info/traversal"
+
+[dependency-groups]
+dev = ["maturin>=1.14,<2", "pytest>=8,<10", "packaging>=24", "ruff>=0.12"]
+
+[tool.maturin]
+manifest-path = "crates/traversal-python/Cargo.toml"
+python-source = "python"
+module-name = "traversal._native"
+include = [
+  { path = "docs/**/*.md", format = "sdist" },
+  { path = "tests/*.py", format = "sdist" },
+  { path = "AGENTS.md", format = "sdist" },
+  { path = "LICENSE", format = "sdist" },
+  { path = "uv.lock", format = "sdist" },
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
