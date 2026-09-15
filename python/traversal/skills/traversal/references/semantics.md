@@ -1,4 +1,4 @@
-# Execution semantics — 0.1.0a2
+# Execution semantics — 0.1.0a3
 
 Rust owns topology, readiness, capacity and state transitions. Python retains
 callables and values. Plan.describe() does not execute tasks. Compilation validates

@@ -13,6 +13,7 @@ from types import MappingProxyType
 from typing import Any
 
 from . import _native
+from .history import History
 
 
 @dataclass(frozen=True)
@@ -33,6 +34,7 @@ class Failure:
 @dataclass(frozen=True)
 class RunReport:
     graph: str
+    run_id: str | None
     states: Mapping[str, str]
     outputs: Mapping[str, Any]
     failures: Mapping[str, Failure]
@@ -79,11 +81,12 @@ class _Task:
 class Graph:
     """Build a static DAG; compilation freezes bindings and dependencies."""
 
-    def __init__(self, name: str, *, version: str = "1"):
+    def __init__(self, name: str, *, version: str = "1", store=None):
         if not isinstance(name, str) or not name.strip():
             raise ValueError("graph name must be a nonempty string")
         if not isinstance(version, str) or not version:
             raise ValueError("graph version must be a nonempty string")
+        self.store = store if isinstance(store, History) or store is None else History(store)
         self.name = name
         self.version = version
         self._owner = object()
@@ -128,7 +131,11 @@ class Graph:
             else:
                 raise TypeError("targets must be Node references or node names")
         return Plan(
-            self.name, self.version, tuple(self._tasks.values()), tuple(dict.fromkeys(names))
+            self.name,
+            self.version,
+            tuple(self._tasks.values()),
+            tuple(dict.fromkeys(names)),
+            self.store,
         )
 
     def run(self, *targets: Node | str, max_concurrency: int = 4) -> RunReport:
@@ -136,7 +143,8 @@ class Graph:
 
 
 class Plan:
-    def __init__(self, name, version, tasks, targets):
+    def __init__(self, name, version, tasks, targets, store=None):
+        self.store = store
         self.name, self.version, self.targets = name, version, targets
         # Rebuild binding containers so caller mutations cannot change plan structure.
         self._tasks = tuple(
@@ -198,6 +206,11 @@ class Plan:
         if type(max_concurrency) is not int or max_concurrency < 1:
             raise ValueError("max_concurrency must be a positive integer")
         state = self._topology.start(list(self.targets), max_concurrency)
+        run_id, lease = (
+            self.store._start(self.name, self.version, list(self._index), self._selected)
+            if self.store is not None
+            else (None, None)
+        )
         outputs, failures = {}, {}
         pending: dict[asyncio.Task, tuple[int, bool]] = {}
         pool = ThreadPoolExecutor(max_workers=max_concurrency, thread_name_prefix="traversal")
@@ -218,6 +231,8 @@ class Plan:
             name = self._tasks[index].node.name
             if future.cancelled():
                 state.finish(index, "cancelled")
+                if self.store is not None:
+                    self.store._finished(run_id, name, "cancelled")
                 return
             exc = future.exception()
             if exc is None:
@@ -228,11 +243,17 @@ class Plan:
                     type(exc).__name__, str(exc), "".join(traceback.format_exception(exc))
                 )
                 state.finish(index, "failed")
+            if self.store is not None:
+                self.store._finished(
+                    run_id, name, "failed" if exc else "succeeded", failures.get(name)
+                )
 
         try:
             while not state.done():
                 for index in state.admit():
                     task = self._tasks[index]
+                    if self.store is not None:
+                        self.store._running(run_id, task.node.name)
                     args = _map_value(task.args, lambda n: outputs[n.name])
                     kwargs = _map_value(task.kwargs, lambda n: outputs[n.name])
                     is_async = inspect.iscoroutinefunction(
@@ -249,6 +270,12 @@ class Plan:
                 for future in sorted(done, key=lambda f: pending[f][0]):
                     index, _ = pending.pop(future)
                     complete(future, index)
+            if self.store is not None:
+                self.store._end(
+                    run_id,
+                    dict(zip(self._index, state.states())),
+                    "failed" if failures else "succeeded",
+                )
         except BaseException:
             state.cancel()
             for future, (_, is_async) in pending.items():
@@ -258,11 +285,23 @@ class Plan:
             await asyncio.shield(asyncio.gather(*pending, return_exceptions=True))
             for future, (index, _) in pending.items():
                 complete(future, index)
+            if self.store is not None:
+                self.store._end(
+                    run_id,
+                    {
+                        n: "unknown" if s == "running" else s
+                        for n, s in zip(self._index, state.states())
+                    },
+                    "interrupted",
+                )
             raise
         finally:
             pool.shutdown(wait=True)
+            if lease is not None:
+                lease.close()
         return RunReport(
             self.name,
+            run_id,
             MappingProxyType(dict(zip(self._index, state.states()))),
             MappingProxyType(outputs),
             MappingProxyType(failures),

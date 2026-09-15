@@ -9,7 +9,7 @@ Scope: free/MIT public library. On 2026-09-15 Trevor explicitly authorized compl
 | 1 | Rust graph structure, validation, target closure | Cycles, missing/foreign references, fan-out, joins, disconnected graphs | Complete |
 | 2 | Rust readiness and execution state | Completion permutations, capacity, exactly-once admission per attempt, failure propagation | Complete |
 | 3 | Python execution adapters and public API | Controlled real concurrency, joins, exceptions, cancellation, one real tool workflow | Complete |
-| 4 | Local SQLite history | History query semantics, concurrent access, crash recovery and ownership | Planned |
+| 4 | Local SQLite history | History query semantics, concurrent access, crash recovery and ownership | Complete |
 | 5 | Explicit result reuse and resume | Key invalidation, missing/corrupt artifacts, unknown side effects | Planned |
 | 6 | Adoption and release readiness | Benchmarks, wheel matrix, fresh skill-led usage, documented limits | Planned |
 

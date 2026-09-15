@@ -5,3 +5,7 @@ from .graph import Failure, Graph, Node, Plan, RunError, RunReport
 
 __version__ = _rust_version.replace("-alpha.", "a")
 __all__ = ["Failure", "Graph", "Node", "Plan", "RunError", "RunReport", "__version__"]
+
+from .history import History, RunActiveError
+
+__all__ += ["History", "RunActiveError"]

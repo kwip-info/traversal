@@ -7,11 +7,11 @@ description: Set up and use Traversal to execute dependent Python functions conc
 
 ## Install first
 
-This skill matches **Traversal 0.1.0a2** (prerelease). Check the task's Python
+This skill matches **Traversal 0.1.0a3** (prerelease). Check the task's Python
 interpreter and existing environment before installing. In a project virtualenv:
 
 ```sh
-python -m pip install 'traversal==0.1.0a2'
+python -m pip install 'traversal==0.1.0a3'
 python -c "import traversal; print(traversal.__version__)"
 ```
 
@@ -47,8 +47,12 @@ blocked. Reports may contain sensitive task data; do not publish them automatica
 
 ## Boundaries and recovery
 
-This prerelease implements graph execution, not persistent history, caching, or
-resume. Do not invent those APIs. Re-running executes tasks again, including their
+For durable run lookup, construct `History(".traversal/runs.sqlite")` and pass it
+as `Graph("name", store=history)`. Inspect `history.latest(graph="name")`,
+`history.latest(graph="name", status="succeeded")`, and `history.get(report.run_id)`.
+The default persists metadata and exception types, not input/output payloads or
+exception messages. Read [references/history.md](references/history.md) before recovery.
+Caching and resume are not implemented in this development version. Re-running executes tasks again, including their
 external effects; the library grants no authorization for sends or publications.
 Cancelling `arun` stops new admission and drains running threads before propagating
 cancellation; it cannot undo or forcibly stop a blocking call. Shared mutable values
