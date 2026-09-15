@@ -1,7 +1,6 @@
 # Traversal execution contract
 
-Status: design contract; layer 0 implements packaging only. API signatures will
-be introduced with their tested layer. Owner: Trevor Ewert / KWIP LLC.
+Status: layers 1–3 implemented; history/reuse sections describe upcoming layers. Owner: Trevor Ewert / KWIP LLC.
 
 ## Scope
 

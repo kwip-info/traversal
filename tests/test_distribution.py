@@ -23,3 +23,10 @@ def test_shipped_skill_example(capsys):
     with importlib.resources.as_file(skill.joinpath("scripts/check_install.py")) as script:
         runpy.run_path(str(script), run_name="__main__")
     assert "native core loaded" in capsys.readouterr().out
+
+
+def test_shipped_quickstart(capsys):
+    skill = importlib.resources.files("traversal").joinpath("skills/traversal")
+    with importlib.resources.as_file(skill.joinpath("scripts/quickstart.py")) as script:
+        runpy.run_path(str(script), run_name="__main__")
+    assert "total = 18" in capsys.readouterr().out

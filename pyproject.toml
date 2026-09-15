@@ -4,14 +4,14 @@ build-backend = "maturin"
 
 [project]
 name = "traversal"
-version = "0.1.0a1"
-description = "Concurrent DAG execution for Python, powered by Rust (development scaffold)"
+version = "0.1.0a2"
+description = "Concurrent DAG execution for Python, powered by Rust"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "KWIP LLC" }]
 classifiers = [
-  "Development Status :: 2 - Pre-Alpha",
+  "Development Status :: 3 - Alpha",
   "Programming Language :: Python :: 3",
   "Programming Language :: Rust",
 ]
@@ -29,6 +29,8 @@ module-name = "traversal._native"
 include = [
   { path = "docs/**/*.md", format = "sdist" },
   { path = "tests/*.py", format = "sdist" },
+  { path = "examples/*.py", format = "sdist" },
+  { path = "benchmarks/*.py", format = "sdist" },
   { path = "AGENTS.md", format = "sdist" },
   { path = "LICENSE", format = "sdist" },
   { path = "uv.lock", format = "sdist" },

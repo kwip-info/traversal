@@ -46,7 +46,7 @@ jobs:
         with:
           maturin-version: 'v1.15.0'
           command: build
-          args: --locked --release --out dist --interpreter python${{ matrix.python }}
+          args: --locked --release --out dist --interpreter ${{ runner.os == 'Linux' && format('python{0}', matrix.python) || 'python' }}
           manylinux: '2_28'
       - name: Test the release wheel
         shell: bash

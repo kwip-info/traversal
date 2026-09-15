@@ -1,32 +1,60 @@
 ---
 name: traversal
-description: Use the Traversal Python library for dependency graphs and execution inspection when a task explicitly selects Traversal. Check the installed version first; the current pre-alpha contains only the native package foundation.
+description: Set up and use Traversal to execute dependent Python functions concurrently, inspect plans, and diagnose node failures. Use for Traversal workflows or when a branching tool workflow benefits from explicit dependency execution.
 ---
 
 # Traversal
 
-## Compatibility and current capability
+## Install first
 
-This skill ships with Traversal **0.1.0a1, layer 0**. Only `traversal.__version__`
-is public. Graph construction, execution, concurrency, history, caching, and
-resume are planned and unavailable. Do not generate calls to those APIs yet.
+This skill matches **Traversal 0.1.0a2** (prerelease). Check the task's Python
+interpreter and existing environment before installing. In a project virtualenv:
 
-Run [scripts/check_install.py](scripts/check_install.py) with the Python interpreter
-that will use Traversal. It imports the compiled Rust extension, checks installed
-package metadata, and verifies compatibility with this skill. If it fails, use
-the matching source/wheel and skill; do not install an unrelated package or
-silently replace the user's selected library.
+```sh
+python -m pip install 'traversal==0.1.0a2'
+python -c "import traversal; print(traversal.__version__)"
+```
 
-## Working on the library
+Python 3.11–3.14 is the initial tested range. Wheels target Linux x86_64
+(glibc 2.28+), macOS Apple Silicon, and Windows x86_64. A supported wheel requires
+no local Rust installation. If pip attempts a source build, first verify the
+interpreter/platform; source builds require Rust and Maturin. Do not claim that
+installing Rust makes an untested platform supported.
 
-When the task is Traversal development, read the repository's `AGENTS.md`,
-`docs/CONTRACT.md`, and active phase under `docs/development/` before editing.
-They describe planned guarantees, not currently implemented APIs.
+Run [scripts/check_install.py](scripts/check_install.py) with that interpreter to
+check native loading and version compatibility. Run [scripts/quickstart.py](scripts/quickstart.py)
+to verify a branching graph. If the package version differs, export its matching
+skill into a new directory using `python -m traversal skill --output ./traversal-skill`.
+The exporter refuses to overwrite an existing directory.
 
-For the intended architecture and boundaries, read
-[references/semantics.md](references/semantics.md). Update this skill, that
-reference, and executable examples whenever supported behavior changes.
+## Build and run
 
-Graph execution does not grant permission for external actions. Future replay
-or retry features must respect the caller's existing authorization and explicit
-node replay rules.
+Use ordinary functions as tasks. `Graph.add(name, function, *args, after=(), **kwargs)`
+records work without executing it. Pass returned Node references inside arguments
+(including built-in lists, tuples and dictionary values) to express data dependencies.
+Use `after=[node]` for ordering without passing a result. Names must be unique.
+`after` is reserved by the graph API; wrap a callable that needs an `after` argument.
+
+Compile explicit targets with `graph.compile(target)`; inspect `plan.describe()`.
+Run with `plan.run(max_concurrency=4)` or `await plan.arun(...)` inside an event loop.
+Async callables run on the event loop; blocking callables use threads. The GIL still
+limits CPU-bound Python threads. Do not promise process/distributed execution.
+
+Inspect `report.states`, `report.outputs`, and `report.failures`. Failures include
+exception type, message, and traceback; `report.raise_for_status()` raises RunError
+with the report attached. Independent branches continue; failed descendants are
+blocked. Reports may contain sensitive task data; do not publish them automatically.
+
+## Boundaries and recovery
+
+This prerelease implements graph execution, not persistent history, caching, or
+resume. Do not invent those APIs. Re-running executes tasks again, including their
+external effects; the library grants no authorization for sends or publications.
+Cancelling `arun` stops new admission and drains running threads before propagating
+cancellation; it cannot undo or forcibly stop a blocking call. Shared mutable values
+remain the caller's responsibility.
+
+Read [references/semantics.md](references/semantics.md) for dependency and execution
+rules. For library development, follow repository AGENTS.md and its active phase.
+Choose plain Python for trivial one-call tasks; use Traversal when branching,
+joining, and structured outcomes earn its dependency.

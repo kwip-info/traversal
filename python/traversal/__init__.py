@@ -1,6 +1,7 @@
-"""Traversal: native package foundation. Graph execution is not available yet."""
+"""Concurrent DAG execution for ordinary Python functions."""
 
 from ._native import __version__ as _rust_version
+from .graph import Failure, Graph, Node, Plan, RunError, RunReport
 
 __version__ = _rust_version.replace("-alpha.", "a")
-__all__ = ["__version__"]
+__all__ = ["Failure", "Graph", "Node", "Plan", "RunError", "RunReport", "__version__"]
