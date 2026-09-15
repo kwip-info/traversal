@@ -63,6 +63,7 @@ impl PyRun {
     fn finish(&mut self, node: usize, outcome: &str) -> PyResult<()> {
         let state = match outcome {
             "succeeded" => State::Succeeded,
+            "reused" => State::Reused,
             "failed" => State::Failed,
             "cancelled" => State::Cancelled,
             _ => return Err(PyValueError::new_err("invalid outcome")),

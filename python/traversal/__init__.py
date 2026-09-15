@@ -9,3 +9,7 @@ __all__ = ["Failure", "Graph", "Node", "Plan", "RunError", "RunReport", "__versi
 from .history import History, RunActiveError
 
 __all__ += ["History", "RunActiveError"]
+
+from .cache import Cache, ResumeDecisionError
+
+__all__ += ["Cache", "ResumeDecisionError"]

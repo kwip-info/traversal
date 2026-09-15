@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import sqlite3
 import time
@@ -58,7 +60,10 @@ class History:
     The default persists only the exception type. Local filesystems only.
     """
 
-    def __init__(self, path, *, error_formatter=None):
+    def __init__(self, path, *, error_formatter=None, max_cache_bytes=1_048_576):
+        if type(max_cache_bytes) is not int or max_cache_bytes < 1:
+            raise ValueError("max_cache_bytes must be positive")
+        self.max_cache_bytes = max_cache_bytes
         self.path = Path(path).expanduser().resolve()
         self.path.parent.mkdir(parents=True, exist_ok=True)
         self._locks = self.path.with_name(self.path.name + ".locks")
@@ -67,7 +72,7 @@ class History:
             db.execute("PRAGMA journal_mode=WAL")
             db.execute("BEGIN IMMEDIATE")
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, 1):
+            if version not in (0, 1, 2):
                 raise ValueError(f"unsupported Traversal history schema: {version}")
             if version == 0:
                 tables = db.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
@@ -81,6 +86,13 @@ class History:
                     "CREATE TABLE nodes (run_id TEXT NOT NULL REFERENCES runs(id), name TEXT NOT NULL, state TEXT NOT NULL, started_at REAL, finished_at REAL, error TEXT, PRIMARY KEY(run_id,name))"
                 )
                 db.execute("PRAGMA user_version=1")
+            if version in (0, 1):
+                db.execute("ALTER TABLE nodes ADD COLUMN cache_key TEXT")
+                db.execute("ALTER TABLE nodes ADD COLUMN reuse_reason TEXT")
+                db.execute(
+                    "CREATE TABLE results (fingerprint TEXT PRIMARY KEY, payload TEXT NOT NULL, digest TEXT NOT NULL)"
+                )
+                db.execute("PRAGMA user_version=2")
 
     @contextmanager
     def _connect(self):
@@ -211,3 +223,51 @@ class History:
         finally:
             lease.close()
         return self.get(run_id)
+
+    def _cached(self, key, previous=None, node=None):
+        with self._connect() as db:
+            if previous is not None:
+                allowed = db.execute(
+                    "SELECT 1 FROM nodes WHERE run_id=? AND name=? AND cache_key=? AND state IN ('succeeded','reused')",
+                    (previous, node, key),
+                ).fetchone()
+                if allowed is None:
+                    return False, None, "no compatible result in previous run"
+            row = db.execute(
+                "SELECT payload,digest FROM results WHERE fingerprint=? AND length(CAST(payload AS BLOB))<=?",
+                (key, self.max_cache_bytes),
+            ).fetchone()
+            if row is None:
+                return False, None, "result missing or exceeds byte limit"
+            payload, digest = row
+            if hashlib.sha256(payload.encode()).hexdigest() != digest:
+                return False, None, "result integrity check failed"
+            try:
+                result = json.loads(payload)
+                from .cache import encode
+
+                encode(result, self.max_cache_bytes)
+            except (ValueError, TypeError, RecursionError):
+                return False, None, "invalid JSON result"
+            return True, result, "compatible persisted result"
+
+    def _save_result(self, key, value):
+        from .cache import encode
+
+        try:
+            payload, digest = encode(value, self.max_cache_bytes)
+        except (ValueError, TypeError, RecursionError) as exc:
+            return "not persisted: " + str(exc)
+        with self._connect() as db:
+            db.execute(
+                "INSERT OR REPLACE INTO results(fingerprint,payload,digest) VALUES(?,?,?)",
+                (key, payload, digest),
+            )
+        return "result persisted"
+
+    def _reuse_note(self, run_id, name, key, reason):
+        with self._connect() as db:
+            db.execute(
+                "UPDATE nodes SET cache_key=?,reuse_reason=? WHERE run_id=? AND name=?",
+                (key, reason, run_id, name),
+            )

@@ -52,7 +52,16 @@ as `Graph("name", store=history)`. Inspect `history.latest(graph="name")`,
 `history.latest(graph="name", status="succeeded")`, and `history.get(report.run_id)`.
 The default persists metadata and exception types, not input/output payloads or
 exception messages. Read [references/history.md](references/history.md) before recovery.
-Caching and resume are not implemented in this development version. Re-running executes tasks again, including their
+For result reuse, explicitly declare a repeat-safe node with `cache=Cache("key")`.
+Change the key whenever its code, inputs, configuration, or external revision
+changes. All ancestors also need cache keys for downstream reuse. Only bounded
+JSON-native results persist; inspect `report.reuse` for misses or skipped storage.
+
+Inspect `plan.explain_run(previous=run_id)` before `plan.resume(run_id)`.
+Previously started nodes without Cache require named `rerun=["node"]` decisions;
+do not supply that list merely to clear an exception. Inspect the external effect
+and existing user authorization first. ResumeDecisionError lists unresolved nodes.
+`cache` is another reserved graph keyword. Read the history reference for details. Re-running executes tasks again, including their
 external effects; the library grants no authorization for sends or publications.
 Cancelling `arun` stops new admission and drains running threads before propagating
 cancellation; it cannot undo or forcibly stop a blocking call. Shared mutable values

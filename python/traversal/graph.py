@@ -13,7 +13,8 @@ from types import MappingProxyType
 from typing import Any
 
 from . import _native
-from .history import History
+from .cache import Cache, ResumeDecisionError, fingerprint
+from .history import History, RunActiveError
 
 
 @dataclass(frozen=True)
@@ -38,10 +39,11 @@ class RunReport:
     states: Mapping[str, str]
     outputs: Mapping[str, Any]
     failures: Mapping[str, Failure]
+    reuse: Mapping[str, str]
 
     @property
     def succeeded(self) -> bool:
-        return all(s in ("succeeded", "unselected") for s in self.states.values())
+        return all(s in ("succeeded", "reused", "unselected") for s in self.states.values())
 
     def raise_for_status(self) -> RunReport:
         if not self.succeeded:
@@ -76,6 +78,7 @@ class _Task:
     args: tuple
     kwargs: dict
     after: tuple[Node, ...]
+    cache: Cache | None
 
 
 class Graph:
@@ -101,16 +104,18 @@ class Graph:
             raise ValueError("node does not belong to this graph")
         return node
 
-    def add(self, name: str, function: Callable, *args, after=(), **kwargs) -> Node:
+    def add(self, name: str, function: Callable, *args, after=(), cache=None, **kwargs) -> Node:
         if not isinstance(name, str) or not name.strip() or name in self._tasks:
             raise ValueError("node name must be a nonempty unique string")
         if not callable(function):
             raise TypeError("node function must be callable")
+        if cache is not None and not isinstance(cache, Cache):
+            raise TypeError("cache must be Cache(key) or None")
         args = _map_value(args, self._check_node)
         kwargs = _map_value(kwargs, self._check_node)
         after = tuple(self._check_node(n) for n in after)
         node = Node(name, self._owner)
-        self._tasks[name] = _Task(node, function, args, kwargs, after)
+        self._tasks[name] = _Task(node, function, args, kwargs, after, cache)
         return node
 
     def depends_on(self, node: Node, *dependencies: Node) -> None:
@@ -118,7 +123,7 @@ class Graph:
         deps = tuple(self._check_node(n) for n in dependencies)
         old = self._tasks[node.name]
         self._tasks[node.name] = _Task(
-            old.node, old.function, old.args, old.kwargs, old.after + deps
+            old.node, old.function, old.args, old.kwargs, old.after + deps, old.cache
         )
 
     def compile(self, *targets: Node | str) -> Plan:
@@ -154,6 +159,7 @@ class Plan:
                 _map_value(t.args, lambda n: n),
                 _map_value(t.kwargs, lambda n: n),
                 t.after,
+                t.cache,
             )
             for t in tasks
         )
@@ -195,19 +201,96 @@ class Plan:
             ],
         }
 
-    def run(self, *, max_concurrency: int = 4) -> RunReport:
+    def _fingerprints(self):
+        keys = [None] * len(self._tasks)
+        for i in self._topology.order():
+            task = self._tasks[i]
+            deps = self._dependencies[i]
+            if task.cache is not None and all(keys[d] is not None for d in deps):
+                keys[i] = fingerprint(
+                    [
+                        self.name,
+                        self.version,
+                        task.node.name,
+                        task.cache.key,
+                        [[self._tasks[d].node.name, keys[d]] for d in deps],
+                    ]
+                )
+        return keys
+
+    def explain_run(self, *, previous=None, rerun=()):
+        force = set(rerun)
+        if not force.issubset(self._index):
+            raise ValueError("rerun contains unknown node names")
+        prior = {}
+        if previous is not None:
+            if self.store is None:
+                raise ValueError("resume requires a history store")
+            record = self.store.get(previous)
+            if record["graph"] != self.name:
+                raise ValueError("previous run belongs to another graph")
+            if record["status"] == "running":
+                raise RunActiveError(
+                    "recover the previous unfinished run explicitly before resuming"
+                )
+            prior = {n["name"]: n for n in record["nodes"]}
+        keys = self._fingerprints()
+        nodes = []
+        for i, task in enumerate(self._tasks):
+            name = task.node.name
+            action, reason = "run", "no reusable result"
+            if not self._selected[i]:
+                action, reason = "unselected", "not needed for targets"
+            elif name in force:
+                reason = "explicit rerun"
+            elif self.store is None:
+                reason = "history store disabled"
+            elif keys[i] is not None:
+                found, _, reason = self.store._cached(keys[i], previous, name)
+                action = "reuse" if found else "run"
+            else:
+                reason = "node or an ancestor has no explicit cache key"
+            old = prior.get(name)
+            if (
+                self._selected[i]
+                and action != "reuse"
+                and name not in force
+                and task.cache is None
+                and old is not None
+                and (
+                    old["started_at"] is not None
+                    or old["state"] in ("succeeded", "reused", "failed", "unknown")
+                )
+            ):
+                action, reason = "decision", "previously started work is not declared repeat-safe"
+            nodes.append({"name": name, "action": action, "reason": reason})
+        return {"graph": self.name, "previous": previous, "nodes": nodes}
+
+    def resume(self, previous, *, rerun=(), max_concurrency=4):
+        return self.run(previous=previous, rerun=rerun, max_concurrency=max_concurrency)
+
+    def run(self, *, max_concurrency: int = 4, previous=None, rerun=()) -> RunReport:
         try:
             asyncio.get_running_loop()
         except RuntimeError:
-            return asyncio.run(self.arun(max_concurrency=max_concurrency))
+            return asyncio.run(
+                self.arun(max_concurrency=max_concurrency, previous=previous, rerun=rerun)
+            )
         raise RuntimeError("An event loop is running; use await plan.arun()")
 
-    async def arun(self, *, max_concurrency: int = 4) -> RunReport:
+    async def arun(self, *, max_concurrency: int = 4, previous=None, rerun=()) -> RunReport:
         if type(max_concurrency) is not int or max_concurrency < 1:
             raise ValueError("max_concurrency must be a positive integer")
+        explanation = self.explain_run(previous=previous, rerun=rerun)
+        decisions = [n["name"] for n in explanation["nodes"] if n["action"] == "decision"]
+        if decisions:
+            raise ResumeDecisionError(decisions)
+        force = set(rerun)
+        keys = self._fingerprints()
+        reuse = {n["name"]: n["reason"] for n in explanation["nodes"]}
         state = self._topology.start(list(self.targets), max_concurrency)
         run_id, lease = (
-            self.store._start(self.name, self.version, list(self._index), self._selected)
+            self.store._start(self.name, self.version, list(self._index), self._selected, previous)
             if self.store is not None
             else (None, None)
         )
@@ -237,6 +320,8 @@ class Plan:
             exc = future.exception()
             if exc is None:
                 outputs[name] = future.result()
+                if self.store is not None and keys[index] is not None:
+                    reuse[name] = self.store._save_result(keys[index], outputs[name])
                 state.finish(index, "succeeded")
             else:
                 failures[name] = Failure(
@@ -244,14 +329,32 @@ class Plan:
                 )
                 state.finish(index, "failed")
             if self.store is not None:
+                self.store._reuse_note(run_id, name, keys[index], reuse[name])
                 self.store._finished(
                     run_id, name, "failed" if exc else "succeeded", failures.get(name)
                 )
 
         try:
             while not state.done():
+                reused_any = False
                 for index in state.admit():
                     task = self._tasks[index]
+                    if (
+                        self.store is not None
+                        and keys[index] is not None
+                        and task.node.name not in force
+                    ):
+                        found, value, reason = self.store._cached(
+                            keys[index], previous, task.node.name
+                        )
+                        if found:
+                            outputs[task.node.name] = value
+                            reuse[task.node.name] = reason
+                            self.store._reuse_note(run_id, task.node.name, keys[index], reason)
+                            self.store._finished(run_id, task.node.name, "reused")
+                            state.finish(index, "reused")
+                            reused_any = True
+                            continue
                     if self.store is not None:
                         self.store._running(run_id, task.node.name)
                     args = _map_value(task.args, lambda n: outputs[n.name])
@@ -262,6 +365,8 @@ class Plan:
                     future = asyncio.create_task(invoke(task, args, kwargs, is_async))
                     pending[future] = (index, is_async)
                 if not pending:
+                    if reused_any:
+                        continue
                     if state.done():
                         break
                     raise RuntimeError("scheduler has unfinished work but no runnable nodes")
@@ -274,7 +379,9 @@ class Plan:
                 self.store._end(
                     run_id,
                     dict(zip(self._index, state.states())),
-                    "failed" if failures else "succeeded",
+                    "succeeded"
+                    if all(s in ("succeeded", "reused", "unselected") for s in state.states())
+                    else "failed",
                 )
         except BaseException:
             state.cancel()
@@ -305,4 +412,5 @@ class Plan:
             MappingProxyType(dict(zip(self._index, state.states()))),
             MappingProxyType(outputs),
             MappingProxyType(failures),
+            MappingProxyType(reuse),
         )

@@ -9,6 +9,7 @@ pub enum State {
     Ready,
     Running,
     Succeeded,
+    Reused,
     Failed,
     Blocked,
     Cancelled,
@@ -21,6 +22,7 @@ impl State {
             Self::Ready => "ready",
             Self::Running => "running",
             Self::Succeeded => "succeeded",
+            Self::Reused => "reused",
             Self::Failed => "failed",
             Self::Blocked => "blocked",
             Self::Cancelled => "cancelled",
@@ -96,13 +98,16 @@ impl RunState {
         if self.states.get(node) != Some(&State::Running) {
             return Err(GraphError(format!("node {node} is not running")));
         }
-        if !matches!(outcome, State::Succeeded | State::Failed | State::Cancelled) {
+        if !matches!(
+            outcome,
+            State::Succeeded | State::Reused | State::Failed | State::Cancelled
+        ) {
             return Err(GraphError("invalid completion outcome".into()));
         }
         self.states[node] = outcome;
         self.active -= 1;
         self.unfinished -= 1;
-        if outcome == State::Succeeded {
+        if matches!(outcome, State::Succeeded | State::Reused) {
             for &next in &self.graph.dependents[node] {
                 if self.states[next] == State::Pending {
                     self.remaining[next] -= 1;
