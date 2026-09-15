@@ -5,7 +5,7 @@ Scope: bounded KWIP shared-capability experiment, private repository, no public 
 
 | Layer | Scope | Gate | Status |
 | --- | --- | --- | --- |
-| 0 | Contract, Rust/PyO3 package, CI, downloadable skill | Installed native wheel and skill example pass; source rebuild works | In progress |
+| 0 | Contract, Rust/PyO3 package, CI, downloadable skill | Installed native wheel and skill example pass; source rebuild works | Complete |
 | 1 | Rust graph structure, validation, target closure | Cycles, missing/foreign references, fan-out, joins, disconnected graphs | Planned |
 | 2 | Rust readiness and execution state | Completion permutations, capacity, exactly-once admission per attempt, failure propagation | Planned |
 | 3 | Python execution adapters and public API | Controlled real concurrency, joins, exceptions, cancellation, one real tool workflow | Planned |

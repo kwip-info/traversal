@@ -1,6 +1,6 @@
 # Layer 0 — repository and native foundation
 
-Status: in progress. Date: 2026-09-15.
+Status: complete. Date: 2026-09-15.
 
 ## Decisions
 
@@ -37,4 +37,15 @@ Local macOS arm64 verification uses Rust 1.98.1, PyO3 0.29.2, and Maturin 1.15.0
 - Bundled skill-creator `quick_validate.py`: valid.
 - GitHub creation verified: `kwip-info/traversal`, `isPrivate: true`.
 
-Remote CI pending initial push. No behavioral execution or performance claim.
+Remote CI passed all 14 jobs: native-core checks, source-distribution rebuild,
+and installed-wheel/skill checks for conventional CPython 3.11, 3.12, 3.13, and
+3.14 on ubuntu-latest, macos-latest, and windows-latest.
+
+- Tested implementation commit: `94e1814bc607477cc13cf36fe7b5b1fcedd38acd`.
+- Evidence: https://github.com/kwip-info/traversal/actions/runs/34976833194
+- Downloadable skill artifact: `traversal-skill`, ID `10400235052`.
+- Initial CI surfaced deprecated action runtimes; upgraded actions to verified
+  current releases before this final run.
+
+Layer 0 is complete. Layer 1 remains planned. No graph execution, runtime
+concurrency, persistent history, performance result, or PyPI publication is claimed.
