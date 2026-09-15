@@ -111,7 +111,7 @@ wheels = [
 
 [[package]]
 name = "traversal"
-version = "0.1.0a3"
+version = "0.1.0"
 source = { editable = "." }
 
 [package.dev-dependencies]

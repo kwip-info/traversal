@@ -257,6 +257,8 @@ class History:
         try:
             payload, digest = encode(value, self.max_cache_bytes)
         except (ValueError, TypeError, RecursionError) as exc:
+            with self._connect() as db:
+                db.execute("DELETE FROM results WHERE fingerprint=?", (key,))
             return "not persisted: " + str(exc)
         with self._connect() as db:
             db.execute(

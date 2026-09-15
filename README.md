@@ -10,13 +10,13 @@ No service, account, telemetry, or Python runtime dependency is required.
 ## Install
 
 ```sh
-python -m pip install 'traversal==0.1.0a2'
+python -m pip install 'traversal==0.1.0'
 ```
 
-This is an early prerelease: graph execution is implemented; persistent history,
-caching and resume are still in development. Conventional CPython 3.11–3.14 is
-CI-tested. Release wheels target Linux x86_64 (glibc 2.28+), macOS Apple Silicon,
-and Windows x86_64. Source builds require Rust and Maturin.
+This first release includes graph execution, local run history, explicit JSON
+result reuse and guarded resume. Conventional CPython 3.11–3.14 is CI-tested.
+Release wheels target Linux x86_64 (glibc 2.28+), macOS Apple Silicon, and Windows
+x86_64. Source builds require Rust and Maturin.
 
 ## A graph in a few lines
 
@@ -53,6 +53,31 @@ Plans freeze topology and binding containers. Arbitrary Python objects remain
 references; shared mutation requires caller coordination. Reports retain all
 successful intermediate outputs until released. Rerunning performs work again:
 there is no exactly-once guarantee for external actions.
+
+## Remember runs and reuse results
+
+```python
+from traversal import Cache, Graph, History
+
+history = History(".traversal/runs.sqlite")
+graph = Graph("totals", version="1", store=history)
+source = graph.add("source", lambda: [1, 2, 3], cache=Cache("input-v1"))
+total = graph.add("total", sum, source, cache=Cache("sum-v1"))
+plan = graph.compile(total)
+first = plan.run().raise_for_status()
+print(history.latest(graph="totals"))
+print(plan.explain_run(previous=first.run_id))
+second = plan.resume(first.run_id)  # Reuses compatible JSON results.
+```
+
+Cache is an explicit declaration that a computation is safe to repeat or skip.
+Its key must cover changing code, inputs and configuration. All ancestors need
+keys for downstream reuse. Previously started non-cache work requires a named
+rerun decision during resume; unknown external effects are never silently replayed.
+History is opt-in and local. Default records omit task payloads and error messages;
+caching explicitly opts into bounded JSON result storage. No pickle.
+
+See the [complete API and boundaries](docs/API.md).
 
 ## Install the agent skill
 

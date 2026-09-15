@@ -4,14 +4,14 @@ build-backend = "maturin"
 
 [project]
 name = "traversal"
-version = "0.1.0a3"
+version = "0.1.0"
 description = "Concurrent DAG execution for Python, powered by Rust"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "KWIP LLC" }]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 4 - Beta",
   "Programming Language :: Python :: 3",
   "Programming Language :: Rust",
 ]

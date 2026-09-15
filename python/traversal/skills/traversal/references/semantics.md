@@ -1,4 +1,4 @@
-# Execution semantics — 0.1.0a3
+# Execution semantics — 0.1.0
 
 Rust owns topology, readiness, capacity and state transitions. Python retains
 callables and values. Plan.describe() does not execute tasks. Compilation validates
@@ -18,5 +18,5 @@ A blocking task without its own timeout can delay cancellation indefinitely.
 RunReport holds all successful outputs until released, including intermediate
 values. This favors inspection over automatic memory reclamation in the first
 release. No argument/result serialization is required for local handoff. Functions
-must coordinate concurrent mutation themselves. Traces stay in memory in this
-version; persistent history and explicit reuse are later layers.
+must coordinate concurrent mutation themselves. Full traces stay in memory by default. Optional History persists metadata and
+Cache persists explicitly declared JSON results; see history.md.

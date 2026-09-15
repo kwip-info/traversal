@@ -51,6 +51,12 @@ class RunReport:
         return self
 
 
+class _TaskException(Exception):
+    def __init__(self, original):
+        self.original = original
+        super().__init__(str(original))
+
+
 class RunError(RuntimeError):
     def __init__(self, report: RunReport):
         self.report = report
@@ -193,6 +199,8 @@ class Plan:
                     "selected": self._selected[i],
                     "callable": getattr(t.function, "__qualname__", type(t.function).__name__),
                     "module": getattr(t.function, "__module__", None),
+                    "repeat_safe": t.cache is not None,
+                    "ordering_dependencies": [n.name for n in t.after],
                 }
                 for i, t in enumerate(self._tasks)
             ],
@@ -300,15 +308,25 @@ class Plan:
         loop = asyncio.get_running_loop()
 
         async def invoke(task, args, kwargs, is_async):
-            if is_async:
-                return await task.function(*args, **kwargs)
-            ctx = contextvars.copy_context()
-            result = await asyncio.shield(
-                loop.run_in_executor(pool, lambda: ctx.run(task.function, *args, **kwargs))
-            )
-            if inspect.isawaitable(result):
-                return await result
-            return result
+            try:
+                if is_async:
+                    return await task.function(*args, **kwargs)
+                ctx = contextvars.copy_context()
+                result = await asyncio.shield(
+                    loop.run_in_executor(pool, lambda: ctx.run(task.function, *args, **kwargs))
+                )
+                if inspect.isawaitable(result):
+                    if inspect.iscoroutine(result):
+                        result.close()
+                    raise TypeError(
+                        "A blocking callable returned an awaitable; wrap it in an async function"
+                    )
+                return result
+            except asyncio.CancelledError:
+                raise
+            except BaseException as exc:
+                # SystemExit/KeyboardInterrupt in user tasks must not escape the event loop.
+                raise _TaskException(exc) from exc
 
         def complete(future, index):
             name = self._tasks[index].node.name
@@ -318,6 +336,8 @@ class Plan:
                     self.store._finished(run_id, name, "cancelled")
                 return
             exc = future.exception()
+            if isinstance(exc, _TaskException):
+                exc = exc.original
             if exc is None:
                 outputs[name] = future.result()
                 if self.store is not None and keys[index] is not None:
@@ -389,7 +409,13 @@ class Plan:
                 if is_async:
                     future.cancel()
             # Blocking calls retain their concurrency slot until they actually finish.
-            await asyncio.shield(asyncio.gather(*pending, return_exceptions=True))
+            drain = asyncio.gather(*pending, return_exceptions=True)
+            while not drain.done():
+                try:
+                    await asyncio.shield(drain)
+                except asyncio.CancelledError:
+                    # Repeated cancellation cannot release the lease before workers finish.
+                    continue
             for future, (index, _) in pending.items():
                 complete(future, index)
             if self.store is not None:

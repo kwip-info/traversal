@@ -7,11 +7,11 @@ description: Set up and use Traversal to execute dependent Python functions conc
 
 ## Install first
 
-This skill matches **Traversal 0.1.0a3** (prerelease). Check the task's Python
+This skill matches **Traversal 0.1.0** (first release). Check the task's Python
 interpreter and existing environment before installing. In a project virtualenv:
 
 ```sh
-python -m pip install 'traversal==0.1.0a3'
+python -m pip install 'traversal==0.1.0'
 python -c "import traversal; print(traversal.__version__)"
 ```
 
@@ -44,6 +44,10 @@ Inspect `report.states`, `report.outputs`, and `report.failures`. Failures inclu
 exception type, message, and traceback; `report.raise_for_status()` raises RunError
 with the report attached. Independent branches continue; failed descendants are
 blocked. Reports may contain sensitive task data; do not publish them automatically.
+
+Run [scripts/history_example.py](scripts/history_example.py) to verify local
+history and reuse with disposable sample data. The CLI can list existing records:
+`python -m traversal history .traversal/runs.sqlite --graph NAME --limit 20`.
 
 ## Boundaries and recovery
 

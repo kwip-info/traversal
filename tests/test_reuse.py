@@ -128,3 +128,16 @@ def test_self_cancel_is_not_recorded_as_success(tmp_path):
     r = g.run(g.add("cancel", cancel))
     assert not r.succeeded
     assert h.get(r.run_id)["status"] == "failed"
+
+
+def test_failed_persistence_does_not_leave_stale_cached_result(tmp_path):
+    h = History(tmp_path / "cache.sqlite")
+    current = [1]
+    g = Graph("forced", store=h)
+    a = g.add("a", lambda: current[0], cache=Cache("caller-version"))
+    p = g.compile(a)
+    p.run()
+    current[0] = (1, 2)
+    r = p.run(rerun=["a"])
+    assert "not persisted" in r.reuse["a"]
+    assert p.explain_run()["nodes"][0]["action"] == "run"

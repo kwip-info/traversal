@@ -181,3 +181,53 @@ def test_invalid_capacity(capacity):
     a = g.add("a", lambda: 0)
     with pytest.raises(ValueError):
         g.compile(a).run(max_concurrency=capacity)
+
+
+@pytest.mark.parametrize("exception", [SystemExit, KeyboardInterrupt])
+def test_task_base_exceptions_are_reported(exception):
+    g = Graph("base-exception")
+
+    def task():
+        raise exception("task exit")
+
+    result = g.run(g.add("task", task))
+    assert result.failures["task"].exception_type == exception.__name__
+
+
+def test_repeated_cancel_keeps_lease_until_thread_finishes(tmp_path):
+    from traversal import History, RunActiveError
+
+    async def scenario():
+        h = History(tmp_path / "cancel.sqlite")
+        started, release = asyncio.Event(), threading.Event()
+        loop = asyncio.get_running_loop()
+
+        def task():
+            loop.call_soon_threadsafe(started.set)
+            assert release.wait(5)
+
+        g = Graph("repeat-cancel", store=h)
+        running = asyncio.create_task(g.compile(g.add("task", task)).arun())
+        await started.wait()
+        running.cancel()
+        await asyncio.sleep(0)
+        running.cancel()
+        await asyncio.sleep(0)
+        run_id = h.latest(graph="repeat-cancel")["id"]
+        with pytest.raises(RunActiveError):
+            h.recover(run_id)
+        release.set()
+        with pytest.raises(asyncio.CancelledError):
+            await running
+        assert h.get(run_id)["status"] == "interrupted"
+
+    asyncio.run(scenario())
+
+
+def test_sync_callable_returning_awaitable_fails_clearly():
+    async def actual():
+        return 1
+
+    g = Graph("bad-adapter")
+    result = g.run(g.add("wrapped", lambda: actual()))
+    assert result.failures["wrapped"].exception_type == "TypeError"
