@@ -7,15 +7,15 @@ description: Set up and use Traversal to execute dependent Python functions conc
 
 ## Install first
 
-This skill matches **Traversal 0.1.0** (first release). Check the task's Python
+This skill matches **Traversal 0.2.0**. Check the task's Python
 interpreter and existing environment before installing. In a project virtualenv:
 
 ```sh
-python -m pip install 'traversal==0.1.0'
+python -m pip install 'traversal==0.2.0'
 python -c "import traversal; print(traversal.__version__)"
 ```
 
-Python 3.11–3.14 is the initial tested range. Wheels target Linux x86_64
+Supports conventional CPython 3.11–3.14 and free-threaded CPython 3.14t. Wheels target Linux x86_64
 (glibc 2.28+), macOS Apple Silicon, and Windows x86_64. A supported wheel requires
 no local Rust installation. If pip attempts a source build, first verify the
 interpreter/platform; source builds require Rust and Maturin. Do not claim that
@@ -37,8 +37,12 @@ Use `after=[node]` for ordering without passing a result. Names must be unique.
 
 Compile explicit targets with `graph.compile(target)`; inspect `plan.describe()`.
 Run with `plan.run(max_concurrency=4)` or `await plan.arun(...)` inside an event loop.
-Async callables run on the event loop; blocking callables use threads. The GIL still
-limits CPU-bound Python threads. Do not promise process/distributed execution.
+Async callables run on the event loop; synchronous callables use threads. Regular
+CPython limits Python CPU threads through the GIL. For substantial independent
+CPU branches, read [references/parallelism.md](references/parallelism.md): it teaches
+3.14t setup, checking the active runtime, shared-state boundaries, and task batching.
+Do not change an existing project's interpreter without considering its dependencies.
+Do not promise process/distributed execution.
 
 Inspect `report.states`, `report.outputs`, and `report.failures`. Failures include
 exception type, message, and traceback; `report.raise_for_status()` raises RunError

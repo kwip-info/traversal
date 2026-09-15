@@ -10,11 +10,11 @@ No service, account, telemetry, or Python runtime dependency is required.
 ## Install
 
 ```sh
-python -m pip install 'traversal==0.1.0'
+python -m pip install 'traversal==0.2.0'
 ```
 
-This first release includes graph execution, local run history, explicit JSON
-result reuse and guarded resume. Conventional CPython 3.11–3.14 is CI-tested.
+Includes graph execution, local run history, explicit JSON result reuse and guarded
+resume. Supports conventional CPython 3.11–3.14 and free-threaded CPython 3.14t.
 Release wheels target Linux x86_64 (glibc 2.28+), macOS Apple Silicon, and Windows
 x86_64. Source builds require Rust and Maturin.
 
@@ -41,8 +41,9 @@ and dictionary values can contain Node references. `after=[node]` adds an orderi
 dependency without passing a result. `after` is a reserved API keyword.
 
 Async functions run on the event loop; ordinary functions use a bounded thread
-pool. Inside an event loop, use `await plan.arun()`. Rust scheduling does not
-bypass the GIL for CPU-bound Python. Cancellation stops new admission and drains
+pool. Inside an event loop, use `await plan.arun()`. On free-threaded CPython 3.14t,
+independent synchronous Python functions can execute on multiple cores. Regular
+CPython still limits Python CPU threads through the GIL. Cancellation stops new admission and drains
 blocking work; tasks should set their own I/O timeouts.
 
 Inspect `report.states`, `report.outputs`, and `report.failures`. Failures include
@@ -53,6 +54,29 @@ Plans freeze topology and binding containers. Arbitrary Python objects remain
 references; shared mutation requires caller coordination. Reports retain all
 successful intermediate outputs until released. Rerunning performs work again:
 there is no exactly-once guarantee for external actions.
+
+## Multicore Python (0.2.0)
+
+Use a separate free-threaded environment for CPU-heavy Python branches:
+
+```sh
+uv python install 3.14t
+uv venv --python 3.14t .venv-t
+uv pip install --python .venv-t 'traversal==0.2.0'
+uv run --python .venv-t --no-project python -c "import traversal, sys; print(sys._is_gil_enabled())"
+# False: the GIL is disabled in this interpreter.
+```
+
+The same `plan.run(max_concurrency=4)` API works. Check GIL status **after importing
+all workload dependencies**: another extension can enable it. This is an optional
+Python build, not a flag that turns ordinary CPython into a free-threaded build.
+Use synchronous functions for CPU branches; CPU work inside `async def` still
+blocks the event loop. Coordinate shared mutable inputs explicitly.
+
+In one macOS arm64 measurement, eight workers ran a Python CPU graph in 80 ms on
+3.14t versus 275 ms on regular 3.14.5. This is workload-specific, not a promised
+speedup. Tiny tasks should be batched. See [performance evidence](docs/PERFORMANCE.md)
+and the skill's [parallelism guide](python/traversal/skills/traversal/references/parallelism.md).
 
 ## Remember runs and reuse results
 
@@ -105,7 +129,7 @@ cargo test --locked -p traversal-core
 ```
 
 Rust topology/state and PyO3 bindings are separate crates. Python adapters have no
-third-party runtime dependency. PyPy, free-threaded CPython, process pools,
+third-party runtime dependency. PyPy, process pools,
 distributed workers, connectors and calendar scheduling are outside this release.
 
 - [Contract](docs/CONTRACT.md)

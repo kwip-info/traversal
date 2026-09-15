@@ -1,9 +1,9 @@
-# Traversal 0.1.0 API
+# Traversal 0.2.0 API
 
 ## Setup
 
-`python -m pip install traversal==0.1.0` in a project virtual environment.
-Supported release wheels: conventional CPython 3.11–3.14, Linux x86_64 glibc 2.28+,
+`python -m pip install traversal==0.2.0` in a project virtual environment.
+Supported release wheels: conventional CPython 3.11–3.14 and free-threaded 3.14t; Linux x86_64 glibc 2.28+,
 macOS arm64, Windows x86_64. No Python runtime dependencies; wheel users need no Rust.
 
 ## Graph construction
@@ -36,8 +36,10 @@ arbitrary objects. Don't concurrently mutate shared task values without coordina
 
 Rust admits eligible nodes up to the capacity. Async callables run on the event
 loop; sync callables run in threads with copied contextvars. A sync callable
-returning an awaitable must be wrapped in an async function. Python CPU work
-still obeys the GIL. Cancellation requests cancel async tasks, stop new admission,
+returning an awaitable must be wrapped in an async function. Synchronous Python
+CPU branches can use multiple cores on free-threaded 3.14t with the GIL disabled.
+Regular CPython retains its GIL constraint. CPU work inside async functions still
+blocks the event loop. See [parallelism](../python/traversal/skills/traversal/references/parallelism.md). Cancellation requests cancel async tasks, stop new admission,
 and drain running threads before propagation. A task that never returns can delay
 cancellation indefinitely: configure task-specific I/O timeouts.
 

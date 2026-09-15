@@ -1,7 +1,29 @@
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 use std::sync::Arc;
-use traversal_core::{Builder, RunState, State, Topology};
+use traversal_core::{Builder, GraphError, RunState, State, Topology};
+
+// Only owned Rust values enter this helper. Python conversion and exception
+// creation remain on the attached side of the boundary.
+fn compile_topology(
+    names: Vec<String>,
+    dependencies: Vec<Vec<usize>>,
+) -> Result<Topology, GraphError> {
+    if names.len() != dependencies.len() {
+        return Err(GraphError("dependency length mismatch".into()));
+    }
+    let mut b = Builder::new();
+    let ids: Vec<_> = names.iter().map(|n| b.add(n)).collect::<Result<_, _>>()?;
+    for (i, deps) in dependencies.iter().enumerate() {
+        for &dep in deps {
+            let d = ids
+                .get(dep)
+                .ok_or_else(|| GraphError("unknown dependency index".into()))?;
+            b.depends_on(ids[i], *d)?;
+        }
+    }
+    b.compile()
+}
 
 #[pyclass(name = "Topology", frozen)]
 struct PyTopology {
@@ -10,43 +32,25 @@ struct PyTopology {
 #[pymethods]
 impl PyTopology {
     #[new]
-    fn new(names: Vec<String>, dependencies: Vec<Vec<usize>>) -> PyResult<Self> {
-        if names.len() != dependencies.len() {
-            return Err(PyValueError::new_err("dependency length mismatch"));
-        }
-        let mut b = Builder::new();
-        let ids: Vec<_> = names
-            .iter()
-            .map(|n| b.add(n))
-            .collect::<Result<_, _>>()
-            .map_err(|e| PyValueError::new_err(e.to_string()))?;
-        for (i, deps) in dependencies.iter().enumerate() {
-            for &dep in deps {
-                let d = ids
-                    .get(dep)
-                    .ok_or_else(|| PyValueError::new_err("unknown dependency index"))?;
-                b.depends_on(ids[i], *d)
-                    .map_err(|e| PyValueError::new_err(e.to_string()))?;
-            }
-        }
+    fn new(py: Python<'_>, names: Vec<String>, dependencies: Vec<Vec<usize>>) -> PyResult<Self> {
         Ok(Self {
             graph: Arc::new(
-                b.compile()
+                py.detach(|| compile_topology(names, dependencies))
                     .map_err(|e| PyValueError::new_err(e.to_string()))?,
             ),
         })
     }
-    fn order(&self) -> Vec<usize> {
-        self.graph.order().to_vec()
+    fn order(&self, py: Python<'_>) -> Vec<usize> {
+        py.detach(|| self.graph.order().to_vec())
     }
-    fn select(&self, targets: Vec<String>) -> PyResult<Vec<bool>> {
-        self.graph
-            .select(&targets)
+    fn select(&self, py: Python<'_>, targets: Vec<String>) -> PyResult<Vec<bool>> {
+        py.detach(|| self.graph.select(&targets))
             .map_err(|e| PyValueError::new_err(e.to_string()))
     }
-    fn start(&self, targets: Vec<String>, capacity: usize) -> PyResult<PyRun> {
+    fn start(&self, py: Python<'_>, targets: Vec<String>, capacity: usize) -> PyResult<PyRun> {
         Ok(PyRun {
-            run: RunState::new(self.graph.clone(), &targets, capacity)
+            run: py
+                .detach(|| RunState::new(self.graph.clone(), &targets, capacity))
                 .map_err(|e| PyValueError::new_err(e.to_string()))?,
         })
     }
@@ -82,7 +86,9 @@ impl PyRun {
         self.run.states().iter().map(|s| s.as_str()).collect()
     }
 }
-#[pymodule]
+// The public coordinator owns each mutable RunState; PyO3 exclusive borrowing
+// rejects overlapping mutable calls to the internal class. No GIL-based locks.
+#[pymodule(gil_used = false)]
 fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add("__version__", traversal_core::VERSION)?;
     module.add_class::<PyTopology>()?;

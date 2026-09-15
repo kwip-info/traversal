@@ -50,3 +50,11 @@ def test_skill_export_and_no_overwrite(tmp_path):
     assert (destination / "scripts/history_example.py").is_file()
     result = subprocess.run(command, capture_output=True, check=False)
     assert result.returncode != 0
+
+
+def test_shipped_parallel_example(capsys):
+    skill = importlib.resources.files("traversal").joinpath("skills/traversal")
+    assert skill.joinpath("references/parallelism.md").is_file()
+    with importlib.resources.as_file(skill.joinpath("scripts/parallel_example.py")) as script:
+        runpy.run_path(str(script), run_name="__main__")
+    assert "parallel branches verified" in capsys.readouterr().out
