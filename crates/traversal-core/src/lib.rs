@@ -2,3 +2,5 @@
 mod graph;
 pub use graph::{Builder, GraphError, NodeId, Topology};
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+mod run;
+pub use run::{RunState, State};

@@ -21,3 +21,6 @@ of these planned graph semantics; consult the matching version's skill before us
 
 Development milestone: Rust topology validation and target selection now pass
 layer 1 tests. These are internal Rust capabilities; no Python graph API exists yet.
+
+Layer 2 Rust readiness, capacity, completion and cancellation state now pass
+controlled tests. Python execution remains unavailable until layer 3.
