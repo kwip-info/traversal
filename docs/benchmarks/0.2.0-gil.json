@@ -1,0 +1,1220 @@
+{
+  "traversal": "0.1.0",
+  "python": "3.14.5 (main, Jun  2 2026, 22:28:56) [Clang 22.1.3 ]",
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "logical_cpus": 10,
+  "free_threaded_build": false,
+  "gil_enabled": true,
+  "openssl": "OpenSSL 3.5.6 7 Apr 2026",
+  "parameters": {
+    "repeats": 3,
+    "python_iterations": 500000,
+    "native_iterations": 100000
+  },
+  "io_sleep_seconds": 0.02,
+  "topology_nodes": 20000,
+  "history": false,
+  "results": [
+    {
+      "workload": "python_cpu",
+      "tasks": 16,
+      "workers": 1,
+      "sequential": {
+        "median_seconds": 0.25955070881173015,
+        "median_cpu_per_wall": 0.9940369694276083,
+        "samples": [
+          {
+            "wall_seconds": 0.2670615410897881,
+            "process_cpu_seconds": 0.26342200000000005
+          },
+          {
+            "wall_seconds": 0.25955070881173015,
+            "process_cpu_seconds": 0.25800299999999987
+          },
+          {
+            "wall_seconds": 0.25840900000184774,
+            "process_cpu_seconds": 0.25704300000000013
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.2612618329003453,
+        "median_cpu_per_wall": 0.9935679423827689,
+        "samples": [
+          {
+            "wall_seconds": 0.2624001249205321,
+            "process_cpu_seconds": 0.2603119999999999
+          },
+          {
+            "wall_seconds": 0.2612618329003453,
+            "process_cpu_seconds": 0.2596400000000001
+          },
+          {
+            "wall_seconds": 0.2602912080474198,
+            "process_cpu_seconds": 0.2586170000000001
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.26355066685937345,
+        "median_cpu_per_wall": 0.9909517707248086,
+        "samples": [
+          {
+            "wall_seconds": 0.26306058280169964,
+            "process_cpu_seconds": 0.26080099999999984
+          },
+          {
+            "wall_seconds": 0.2645180409308523,
+            "process_cpu_seconds": 0.26202700000000023
+          },
+          {
+            "wall_seconds": 0.26355066685937345,
+            "process_cpu_seconds": 0.26116600000000023
+          }
+        ]
+      },
+      "speedup_vs_sequential": 0.984822811889231
+    },
+    {
+      "workload": "python_cpu",
+      "tasks": 16,
+      "workers": 2,
+      "sequential": {
+        "median_seconds": 0.25955070881173015,
+        "median_cpu_per_wall": 0.9940369694276083,
+        "samples": [
+          {
+            "wall_seconds": 0.2670615410897881,
+            "process_cpu_seconds": 0.26342200000000005
+          },
+          {
+            "wall_seconds": 0.25955070881173015,
+            "process_cpu_seconds": 0.25800299999999987
+          },
+          {
+            "wall_seconds": 0.25840900000184774,
+            "process_cpu_seconds": 0.25704300000000013
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.2698164589237422,
+        "median_cpu_per_wall": 0.99431805016034,
+        "samples": [
+          {
+            "wall_seconds": 0.26170683302916586,
+            "process_cpu_seconds": 0.2603139999999997
+          },
+          {
+            "wall_seconds": 0.2698164589237422,
+            "process_cpu_seconds": 0.2676759999999998
+          },
+          {
+            "wall_seconds": 0.272801041835919,
+            "process_cpu_seconds": 0.27125100000000035
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.2629305829759687,
+        "median_cpu_per_wall": 0.9924672780414046,
+        "samples": [
+          {
+            "wall_seconds": 0.2629305829759687,
+            "process_cpu_seconds": 0.26094999999999935
+          },
+          {
+            "wall_seconds": 0.2627318331506103,
+            "process_cpu_seconds": 0.2609199999999996
+          },
+          {
+            "wall_seconds": 0.263180292211473,
+            "process_cpu_seconds": 0.2610890000000001
+          }
+        ]
+      },
+      "speedup_vs_sequential": 0.9871453745472146
+    },
+    {
+      "workload": "python_cpu",
+      "tasks": 16,
+      "workers": 4,
+      "sequential": {
+        "median_seconds": 0.25955070881173015,
+        "median_cpu_per_wall": 0.9940369694276083,
+        "samples": [
+          {
+            "wall_seconds": 0.2670615410897881,
+            "process_cpu_seconds": 0.26342200000000005
+          },
+          {
+            "wall_seconds": 0.25955070881173015,
+            "process_cpu_seconds": 0.25800299999999987
+          },
+          {
+            "wall_seconds": 0.25840900000184774,
+            "process_cpu_seconds": 0.25704300000000013
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.2654662081040442,
+        "median_cpu_per_wall": 0.9965005477176971,
+        "samples": [
+          {
+            "wall_seconds": 0.26138308411464095,
+            "process_cpu_seconds": 0.2601880000000003
+          },
+          {
+            "wall_seconds": 0.2654662081040442,
+            "process_cpu_seconds": 0.2646570000000006
+          },
+          {
+            "wall_seconds": 0.27014937484636903,
+            "process_cpu_seconds": 0.2692040000000002
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.2633419169578701,
+        "median_cpu_per_wall": 0.9951073334771496,
+        "samples": [
+          {
+            "wall_seconds": 0.2633419169578701,
+            "process_cpu_seconds": 0.26209099999999985
+          },
+          {
+            "wall_seconds": 0.2631575420964509,
+            "process_cpu_seconds": 0.26187000000000005
+          },
+          {
+            "wall_seconds": 0.26406499999575317,
+            "process_cpu_seconds": 0.26249500000000037
+          }
+        ]
+      },
+      "speedup_vs_sequential": 0.9856034763096735
+    },
+    {
+      "workload": "python_cpu",
+      "tasks": 16,
+      "workers": 8,
+      "sequential": {
+        "median_seconds": 0.25955070881173015,
+        "median_cpu_per_wall": 0.9940369694276083,
+        "samples": [
+          {
+            "wall_seconds": 0.2670615410897881,
+            "process_cpu_seconds": 0.26342200000000005
+          },
+          {
+            "wall_seconds": 0.25955070881173015,
+            "process_cpu_seconds": 0.25800299999999987
+          },
+          {
+            "wall_seconds": 0.25840900000184774,
+            "process_cpu_seconds": 0.25704300000000013
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.26510154199786484,
+        "median_cpu_per_wall": 0.9950438173269824,
+        "samples": [
+          {
+            "wall_seconds": 0.2635934171266854,
+            "process_cpu_seconds": 0.2622870000000006
+          },
+          {
+            "wall_seconds": 0.2952889581210911,
+            "process_cpu_seconds": 0.28345599999999926
+          },
+          {
+            "wall_seconds": 0.26510154199786484,
+            "process_cpu_seconds": 0.2641789999999986
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.27449466683901846,
+        "median_cpu_per_wall": 0.9928162973548879,
+        "samples": [
+          {
+            "wall_seconds": 0.26907808310352266,
+            "process_cpu_seconds": 0.26448800000000006
+          },
+          {
+            "wall_seconds": 0.27449466683901846,
+            "process_cpu_seconds": 0.27271600000000085
+          },
+          {
+            "wall_seconds": 0.2762444580439478,
+            "process_cpu_seconds": 0.27425999999999995
+          }
+        ]
+      },
+      "speedup_vs_sequential": 0.9455582937206848
+    },
+    {
+      "workload": "native_cpu",
+      "tasks": 16,
+      "workers": 1,
+      "sequential": {
+        "median_seconds": 0.12984562502242625,
+        "median_cpu_per_wall": 0.9853256487032184,
+        "samples": [
+          {
+            "wall_seconds": 0.13330516684800386,
+            "process_cpu_seconds": 0.13134900000000016
+          },
+          {
+            "wall_seconds": 0.12984562502242625,
+            "process_cpu_seconds": 0.1278050000000004
+          },
+          {
+            "wall_seconds": 0.12212679209187627,
+            "process_cpu_seconds": 0.12190999999999974
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.12319670896977186,
+        "median_cpu_per_wall": 0.9994585166249166,
+        "samples": [
+          {
+            "wall_seconds": 0.17043829197064042,
+            "process_cpu_seconds": 0.14019099999999973
+          },
+          {
+            "wall_seconds": 0.12319670896977186,
+            "process_cpu_seconds": 0.12312999999999974
+          },
+          {
+            "wall_seconds": 0.12189916707575321,
+            "process_cpu_seconds": 0.12183899999999959
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.12378466711379588,
+        "median_cpu_per_wall": 0.9908900905088757,
+        "samples": [
+          {
+            "wall_seconds": 0.12378466711379588,
+            "process_cpu_seconds": 0.12265700000000024
+          },
+          {
+            "wall_seconds": 0.1235059997998178,
+            "process_cpu_seconds": 0.12240000000000073
+          },
+          {
+            "wall_seconds": 0.12427262496203184,
+            "process_cpu_seconds": 0.12309199999999976
+          }
+        ]
+      },
+      "speedup_vs_sequential": 1.0489637210322544
+    },
+    {
+      "workload": "native_cpu",
+      "tasks": 16,
+      "workers": 2,
+      "sequential": {
+        "median_seconds": 0.12984562502242625,
+        "median_cpu_per_wall": 0.9853256487032184,
+        "samples": [
+          {
+            "wall_seconds": 0.13330516684800386,
+            "process_cpu_seconds": 0.13134900000000016
+          },
+          {
+            "wall_seconds": 0.12984562502242625,
+            "process_cpu_seconds": 0.1278050000000004
+          },
+          {
+            "wall_seconds": 0.12212679209187627,
+            "process_cpu_seconds": 0.12190999999999974
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.06320512504316866,
+        "median_cpu_per_wall": 1.9804927894416549,
+        "samples": [
+          {
+            "wall_seconds": 0.06366445799358189,
+            "process_cpu_seconds": 0.12608700000000006
+          },
+          {
+            "wall_seconds": 0.06304520810954273,
+            "process_cpu_seconds": 0.12490600000000107
+          },
+          {
+            "wall_seconds": 0.06320512504316866,
+            "process_cpu_seconds": 0.12510900000000014
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.06436283304356039,
+        "median_cpu_per_wall": 1.9582264179499227,
+        "samples": [
+          {
+            "wall_seconds": 0.06436283304356039,
+            "process_cpu_seconds": 0.12603700000000018
+          },
+          {
+            "wall_seconds": 0.06480116699822247,
+            "process_cpu_seconds": 0.12652299999999883
+          },
+          {
+            "wall_seconds": 0.06350395805202425,
+            "process_cpu_seconds": 0.12458499999999972
+          }
+        ]
+      },
+      "speedup_vs_sequential": 2.017400709110295
+    },
+    {
+      "workload": "native_cpu",
+      "tasks": 16,
+      "workers": 4,
+      "sequential": {
+        "median_seconds": 0.12984562502242625,
+        "median_cpu_per_wall": 0.9853256487032184,
+        "samples": [
+          {
+            "wall_seconds": 0.13330516684800386,
+            "process_cpu_seconds": 0.13134900000000016
+          },
+          {
+            "wall_seconds": 0.12984562502242625,
+            "process_cpu_seconds": 0.1278050000000004
+          },
+          {
+            "wall_seconds": 0.12212679209187627,
+            "process_cpu_seconds": 0.12190999999999974
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.033344042021781206,
+        "median_cpu_per_wall": 3.9409139394126926,
+        "samples": [
+          {
+            "wall_seconds": 0.03351983311586082,
+            "process_cpu_seconds": 0.1307380000000009
+          },
+          {
+            "wall_seconds": 0.033035000087693334,
+            "process_cpu_seconds": 0.13044999999999973
+          },
+          {
+            "wall_seconds": 0.033344042021781206,
+            "process_cpu_seconds": 0.13140600000000013
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.03433916578069329,
+        "median_cpu_per_wall": 3.8658481352694443,
+        "samples": [
+          {
+            "wall_seconds": 0.034119665855541825,
+            "process_cpu_seconds": 0.1319619999999997
+          },
+          {
+            "wall_seconds": 0.03433916578069329,
+            "process_cpu_seconds": 0.13275000000000148
+          },
+          {
+            "wall_seconds": 0.03442829102277756,
+            "process_cpu_seconds": 0.13255800000000129
+          }
+        ]
+      },
+      "speedup_vs_sequential": 3.781269057369766
+    },
+    {
+      "workload": "native_cpu",
+      "tasks": 16,
+      "workers": 8,
+      "sequential": {
+        "median_seconds": 0.12984562502242625,
+        "median_cpu_per_wall": 0.9853256487032184,
+        "samples": [
+          {
+            "wall_seconds": 0.13330516684800386,
+            "process_cpu_seconds": 0.13134900000000016
+          },
+          {
+            "wall_seconds": 0.12984562502242625,
+            "process_cpu_seconds": 0.1278050000000004
+          },
+          {
+            "wall_seconds": 0.12212679209187627,
+            "process_cpu_seconds": 0.12190999999999974
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.02969566616229713,
+        "median_cpu_per_wall": 6.445721707466641,
+        "samples": [
+          {
+            "wall_seconds": 0.02992104203440249,
+            "process_cpu_seconds": 0.19202800000000053
+          },
+          {
+            "wall_seconds": 0.02969566616229713,
+            "process_cpu_seconds": 0.1914100000000012
+          },
+          {
+            "wall_seconds": 0.029229208128526807,
+            "process_cpu_seconds": 0.19739299999999993
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.028096584137529135,
+        "median_cpu_per_wall": 6.837727440961415,
+        "samples": [
+          {
+            "wall_seconds": 0.028096584137529135,
+            "process_cpu_seconds": 0.19376000000000104
+          },
+          {
+            "wall_seconds": 0.028092666994780302,
+            "process_cpu_seconds": 0.19209000000000032
+          },
+          {
+            "wall_seconds": 0.02970704110339284,
+            "process_cpu_seconds": 0.19834899999999855
+          }
+        ]
+      },
+      "speedup_vs_sequential": 4.621402530174087
+    },
+    {
+      "workload": "blocking_io",
+      "tasks": 16,
+      "workers": 1,
+      "sequential": {
+        "median_seconds": 0.3829900410491973,
+        "median_cpu_per_wall": 0.0017311155093827826,
+        "samples": [
+          {
+            "wall_seconds": 0.3749224580824375,
+            "process_cpu_seconds": 0.0006479999999999819
+          },
+          {
+            "wall_seconds": 0.39000533311627805,
+            "process_cpu_seconds": 0.0007299999999990092
+          },
+          {
+            "wall_seconds": 0.3829900410491973,
+            "process_cpu_seconds": 0.0006629999999994141
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.37770558381453156,
+        "median_cpu_per_wall": 0.00807772013637323,
+        "samples": [
+          {
+            "wall_seconds": 0.37770558381453156,
+            "process_cpu_seconds": 0.0030509999999992488
+          },
+          {
+            "wall_seconds": 0.3754511249717325,
+            "process_cpu_seconds": 0.003084000000001197
+          },
+          {
+            "wall_seconds": 0.37883712514303625,
+            "process_cpu_seconds": 0.0015279999999986416
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.39532362506724894,
+        "median_cpu_per_wall": 0.024183848492520223,
+        "samples": [
+          {
+            "wall_seconds": 0.3980342501308769,
+            "process_cpu_seconds": 0.009625999999999024
+          },
+          {
+            "wall_seconds": 0.39532362506724894,
+            "process_cpu_seconds": 0.009506000000000014
+          },
+          {
+            "wall_seconds": 0.3948485830333084,
+            "process_cpu_seconds": 0.011297000000000779
+          }
+        ]
+      },
+      "speedup_vs_sequential": 0.9688012978835921
+    },
+    {
+      "workload": "blocking_io",
+      "tasks": 16,
+      "workers": 2,
+      "sequential": {
+        "median_seconds": 0.3829900410491973,
+        "median_cpu_per_wall": 0.0017311155093827826,
+        "samples": [
+          {
+            "wall_seconds": 0.3749224580824375,
+            "process_cpu_seconds": 0.0006479999999999819
+          },
+          {
+            "wall_seconds": 0.39000533311627805,
+            "process_cpu_seconds": 0.0007299999999990092
+          },
+          {
+            "wall_seconds": 0.3829900410491973,
+            "process_cpu_seconds": 0.0006629999999994141
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.1877755830064416,
+        "median_cpu_per_wall": 0.00760606373096736,
+        "samples": [
+          {
+            "wall_seconds": 0.1877755830064416,
+            "process_cpu_seconds": 0.00234400000000079
+          },
+          {
+            "wall_seconds": 0.18787641683593392,
+            "process_cpu_seconds": 0.0014289999999999026
+          },
+          {
+            "wall_seconds": 0.1812576660886407,
+            "process_cpu_seconds": 0.001377000000001516
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.19437245815061033,
+        "median_cpu_per_wall": 0.03051873472300638,
+        "samples": [
+          {
+            "wall_seconds": 0.19437245815061033,
+            "process_cpu_seconds": 0.005587999999999482
+          },
+          {
+            "wall_seconds": 0.18807562510482967,
+            "process_cpu_seconds": 0.006764999999999688
+          },
+          {
+            "wall_seconds": 0.19699375005438924,
+            "process_cpu_seconds": 0.006012000000000128
+          }
+        ]
+      },
+      "speedup_vs_sequential": 1.9703925375705023
+    },
+    {
+      "workload": "blocking_io",
+      "tasks": 16,
+      "workers": 4,
+      "sequential": {
+        "median_seconds": 0.3829900410491973,
+        "median_cpu_per_wall": 0.0017311155093827826,
+        "samples": [
+          {
+            "wall_seconds": 0.3749224580824375,
+            "process_cpu_seconds": 0.0006479999999999819
+          },
+          {
+            "wall_seconds": 0.39000533311627805,
+            "process_cpu_seconds": 0.0007299999999990092
+          },
+          {
+            "wall_seconds": 0.3829900410491973,
+            "process_cpu_seconds": 0.0006629999999994141
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.09598708292469382,
+        "median_cpu_per_wall": 0.02187164541588866,
+        "samples": [
+          {
+            "wall_seconds": 0.09836383303627372,
+            "process_cpu_seconds": 0.0021769999999996514
+          },
+          {
+            "wall_seconds": 0.09598708292469382,
+            "process_cpu_seconds": 0.0016610000000003566
+          },
+          {
+            "wall_seconds": 0.09199124993756413,
+            "process_cpu_seconds": 0.0020119999999987925
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.10001445794478059,
+        "median_cpu_per_wall": 0.056784207053173684,
+        "samples": [
+          {
+            "wall_seconds": 0.10447674989700317,
+            "process_cpu_seconds": 0.005095000000000738
+          },
+          {
+            "wall_seconds": 0.10001445794478059,
+            "process_cpu_seconds": 0.006306000000000367
+          },
+          {
+            "wall_seconds": 0.09351191599853337,
+            "process_cpu_seconds": 0.005309999999999704
+          }
+        ]
+      },
+      "speedup_vs_sequential": 3.829346765651138
+    },
+    {
+      "workload": "blocking_io",
+      "tasks": 16,
+      "workers": 8,
+      "sequential": {
+        "median_seconds": 0.3829900410491973,
+        "median_cpu_per_wall": 0.0017311155093827826,
+        "samples": [
+          {
+            "wall_seconds": 0.3749224580824375,
+            "process_cpu_seconds": 0.0006479999999999819
+          },
+          {
+            "wall_seconds": 0.39000533311627805,
+            "process_cpu_seconds": 0.0007299999999990092
+          },
+          {
+            "wall_seconds": 0.3829900410491973,
+            "process_cpu_seconds": 0.0006629999999994141
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.049740416929125786,
+        "median_cpu_per_wall": 0.041394908348572006,
+        "samples": [
+          {
+            "wall_seconds": 0.050730499904602766,
+            "process_cpu_seconds": 0.002074999999999605
+          },
+          {
+            "wall_seconds": 0.04752199980430305,
+            "process_cpu_seconds": 0.002153000000001626
+          },
+          {
+            "wall_seconds": 0.049740416929125786,
+            "process_cpu_seconds": 0.002059000000000921
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.051203333074226975,
+        "median_cpu_per_wall": 0.09716111378565058,
+        "samples": [
+          {
+            "wall_seconds": 0.05146091687493026,
+            "process_cpu_seconds": 0.004999999999999005
+          },
+          {
+            "wall_seconds": 0.04770533321425319,
+            "process_cpu_seconds": 0.005046000000000106
+          },
+          {
+            "wall_seconds": 0.051203333074226975,
+            "process_cpu_seconds": 0.004697999999999425
+          }
+        ]
+      },
+      "speedup_vs_sequential": 7.479787311775101
+    },
+    {
+      "workload": "tiny_nodes",
+      "tasks": 512,
+      "workers": 1,
+      "sequential": {
+        "median_seconds": 3.091711550951004e-05,
+        "median_cpu_per_wall": 1.0013536459157149,
+        "samples": [
+          {
+            "wall_seconds": 3.0125025659799576e-05,
+            "process_cpu_seconds": 2.9000000001389026e-05
+          },
+          {
+            "wall_seconds": 3.095809370279312e-05,
+            "process_cpu_seconds": 3.0999999999892225e-05
+          },
+          {
+            "wall_seconds": 3.091711550951004e-05,
+            "process_cpu_seconds": 3.0999999999892225e-05
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.0029793328139930964,
+        "median_cpu_per_wall": 0.9955248994232662,
+        "samples": [
+          {
+            "wall_seconds": 0.004342624917626381,
+            "process_cpu_seconds": 0.004376999999999853
+          },
+          {
+            "wall_seconds": 0.0029793328139930964,
+            "process_cpu_seconds": 0.002965999999998914
+          },
+          {
+            "wall_seconds": 0.0021217078901827335,
+            "process_cpu_seconds": 0.002048000000000272
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.05034679197706282,
+        "median_cpu_per_wall": 0.4343622473901332,
+        "samples": [
+          {
+            "wall_seconds": 0.051359541015699506,
+            "process_cpu_seconds": 0.022764999999999702
+          },
+          {
+            "wall_seconds": 0.05034679197706282,
+            "process_cpu_seconds": 0.021748999999999796
+          },
+          {
+            "wall_seconds": 0.04980174987576902,
+            "process_cpu_seconds": 0.021632000000000318
+          }
+        ]
+      },
+      "speedup_vs_sequential": 0.0006140831281483709
+    },
+    {
+      "workload": "tiny_nodes",
+      "tasks": 512,
+      "workers": 2,
+      "sequential": {
+        "median_seconds": 3.091711550951004e-05,
+        "median_cpu_per_wall": 1.0013536459157149,
+        "samples": [
+          {
+            "wall_seconds": 3.0125025659799576e-05,
+            "process_cpu_seconds": 2.9000000001389026e-05
+          },
+          {
+            "wall_seconds": 3.095809370279312e-05,
+            "process_cpu_seconds": 3.0999999999892225e-05
+          },
+          {
+            "wall_seconds": 3.091711550951004e-05,
+            "process_cpu_seconds": 3.0999999999892225e-05
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.001416624989360571,
+        "median_cpu_per_wall": 1.0273538817593983,
+        "samples": [
+          {
+            "wall_seconds": 0.001416624989360571,
+            "process_cpu_seconds": 0.0014590000000005432
+          },
+          {
+            "wall_seconds": 0.0013724579475820065,
+            "process_cpu_seconds": 0.0014099999999999113
+          },
+          {
+            "wall_seconds": 0.0016477499157190323,
+            "process_cpu_seconds": 0.001641999999998589
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.029881250113248825,
+        "median_cpu_per_wall": 0.6496046827503159,
+        "samples": [
+          {
+            "wall_seconds": 0.029881250113248825,
+            "process_cpu_seconds": 0.019410999999999845
+          },
+          {
+            "wall_seconds": 0.030132667161524296,
+            "process_cpu_seconds": 0.019716000000000733
+          },
+          {
+            "wall_seconds": 0.02974137500859797,
+            "process_cpu_seconds": 0.01905400000000057
+          }
+        ]
+      },
+      "speedup_vs_sequential": 0.0010346660662567772
+    },
+    {
+      "workload": "tiny_nodes",
+      "tasks": 512,
+      "workers": 4,
+      "sequential": {
+        "median_seconds": 3.091711550951004e-05,
+        "median_cpu_per_wall": 1.0013536459157149,
+        "samples": [
+          {
+            "wall_seconds": 3.0125025659799576e-05,
+            "process_cpu_seconds": 2.9000000001389026e-05
+          },
+          {
+            "wall_seconds": 3.095809370279312e-05,
+            "process_cpu_seconds": 3.0999999999892225e-05
+          },
+          {
+            "wall_seconds": 3.091711550951004e-05,
+            "process_cpu_seconds": 3.0999999999892225e-05
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.0014877920038998127,
+        "median_cpu_per_wall": 1.0681546349548903,
+        "samples": [
+          {
+            "wall_seconds": 0.0016499590128660202,
+            "process_cpu_seconds": 0.001746999999999943
+          },
+          {
+            "wall_seconds": 0.0014877920038998127,
+            "process_cpu_seconds": 0.001614999999999256
+          },
+          {
+            "wall_seconds": 0.0014183339662849903,
+            "process_cpu_seconds": 0.0015150000000012653
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.02158612501807511,
+        "median_cpu_per_wall": 0.9235562187889735,
+        "samples": [
+          {
+            "wall_seconds": 0.022254625102505088,
+            "process_cpu_seconds": 0.0198160000000005
+          },
+          {
+            "wall_seconds": 0.02158612501807511,
+            "process_cpu_seconds": 0.01993599999999951
+          },
+          {
+            "wall_seconds": 0.02093337499536574,
+            "process_cpu_seconds": 0.01934199999999997
+          }
+        ]
+      },
+      "speedup_vs_sequential": 0.0014322679723026547
+    },
+    {
+      "workload": "tiny_nodes",
+      "tasks": 512,
+      "workers": 8,
+      "sequential": {
+        "median_seconds": 3.091711550951004e-05,
+        "median_cpu_per_wall": 1.0013536459157149,
+        "samples": [
+          {
+            "wall_seconds": 3.0125025659799576e-05,
+            "process_cpu_seconds": 2.9000000001389026e-05
+          },
+          {
+            "wall_seconds": 3.095809370279312e-05,
+            "process_cpu_seconds": 3.0999999999892225e-05
+          },
+          {
+            "wall_seconds": 3.091711550951004e-05,
+            "process_cpu_seconds": 3.0999999999892225e-05
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.0016877090092748404,
+        "median_cpu_per_wall": 1.1151211433117858,
+        "samples": [
+          {
+            "wall_seconds": 0.0019429582171142101,
+            "process_cpu_seconds": 0.0021900000000005804
+          },
+          {
+            "wall_seconds": 0.0016826670616865158,
+            "process_cpu_seconds": 0.0018450000000012068
+          },
+          {
+            "wall_seconds": 0.0016877090092748404,
+            "process_cpu_seconds": 0.0018820000000001613
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.017878583166748285,
+        "median_cpu_per_wall": 1.1150771744081902,
+        "samples": [
+          {
+            "wall_seconds": 0.017878583166748285,
+            "process_cpu_seconds": 0.01993599999999951
+          },
+          {
+            "wall_seconds": 0.017727207858115435,
+            "process_cpu_seconds": 0.02030500000000046
+          },
+          {
+            "wall_seconds": 0.017974834190681577,
+            "process_cpu_seconds": 0.019873999999999725
+          }
+        ]
+      },
+      "speedup_vs_sequential": 0.0017292821931780163
+    },
+    {
+      "workload": "native_topology",
+      "tasks": 8,
+      "workers": 1,
+      "sequential": {
+        "median_seconds": 0.04773929202929139,
+        "median_cpu_per_wall": 0.9916752169386314,
+        "samples": [
+          {
+            "wall_seconds": 0.04810445918701589,
+            "process_cpu_seconds": 0.047703999999999525
+          },
+          {
+            "wall_seconds": 0.04708450008183718,
+            "process_cpu_seconds": 0.04687299999999972
+          },
+          {
+            "wall_seconds": 0.04773929202929139,
+            "process_cpu_seconds": 0.047077999999999065
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.0478727500885725,
+        "median_cpu_per_wall": 0.9955774815298484,
+        "samples": [
+          {
+            "wall_seconds": 0.04849308403208852,
+            "process_cpu_seconds": 0.04820699999999967
+          },
+          {
+            "wall_seconds": 0.04787070909515023,
+            "process_cpu_seconds": 0.047658999999997675
+          },
+          {
+            "wall_seconds": 0.0478727500885725,
+            "process_cpu_seconds": 0.047713999999999146
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.04968024999834597,
+        "median_cpu_per_wall": 0.9842407192898723,
+        "samples": [
+          {
+            "wall_seconds": 0.04968024999834597,
+            "process_cpu_seconds": 0.048901999999998225
+          },
+          {
+            "wall_seconds": 0.04900020803324878,
+            "process_cpu_seconds": 0.04822799999999816
+          },
+          {
+            "wall_seconds": 0.04993675020523369,
+            "process_cpu_seconds": 0.0486930000000001
+          }
+        ]
+      },
+      "speedup_vs_sequential": 0.9609309943263329
+    },
+    {
+      "workload": "native_topology",
+      "tasks": 8,
+      "workers": 2,
+      "sequential": {
+        "median_seconds": 0.04773929202929139,
+        "median_cpu_per_wall": 0.9916752169386314,
+        "samples": [
+          {
+            "wall_seconds": 0.04810445918701589,
+            "process_cpu_seconds": 0.047703999999999525
+          },
+          {
+            "wall_seconds": 0.04708450008183718,
+            "process_cpu_seconds": 0.04687299999999972
+          },
+          {
+            "wall_seconds": 0.04773929202929139,
+            "process_cpu_seconds": 0.047077999999999065
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.028738249791786075,
+        "median_cpu_per_wall": 1.8349957513024284,
+        "samples": [
+          {
+            "wall_seconds": 0.028111792169511318,
+            "process_cpu_seconds": 0.05175799999999953
+          },
+          {
+            "wall_seconds": 0.0289063339587301,
+            "process_cpu_seconds": 0.05304299999999884
+          },
+          {
+            "wall_seconds": 0.028738249791786075,
+            "process_cpu_seconds": 0.05258299999999849
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.030164417112246156,
+        "median_cpu_per_wall": 1.7796465219347675,
+        "samples": [
+          {
+            "wall_seconds": 0.030164417112246156,
+            "process_cpu_seconds": 0.05368199999999845
+          },
+          {
+            "wall_seconds": 0.031410417053848505,
+            "process_cpu_seconds": 0.055153000000000674
+          },
+          {
+            "wall_seconds": 0.03010045806877315,
+            "process_cpu_seconds": 0.054334999999998246
+          }
+        ]
+      },
+      "speedup_vs_sequential": 1.58263598635593
+    },
+    {
+      "workload": "native_topology",
+      "tasks": 8,
+      "workers": 4,
+      "sequential": {
+        "median_seconds": 0.04773929202929139,
+        "median_cpu_per_wall": 0.9916752169386314,
+        "samples": [
+          {
+            "wall_seconds": 0.04810445918701589,
+            "process_cpu_seconds": 0.047703999999999525
+          },
+          {
+            "wall_seconds": 0.04708450008183718,
+            "process_cpu_seconds": 0.04687299999999972
+          },
+          {
+            "wall_seconds": 0.04773929202929139,
+            "process_cpu_seconds": 0.047077999999999065
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.02161791711114347,
+        "median_cpu_per_wall": 2.815673669533311,
+        "samples": [
+          {
+            "wall_seconds": 0.02161791711114347,
+            "process_cpu_seconds": 0.060869000000000284
+          },
+          {
+            "wall_seconds": 0.021706624887883663,
+            "process_cpu_seconds": 0.06122999999999834
+          },
+          {
+            "wall_seconds": 0.019217000110074878,
+            "process_cpu_seconds": 0.05176499999999962
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.021794874919578433,
+        "median_cpu_per_wall": 2.5691940573580943,
+        "samples": [
+          {
+            "wall_seconds": 0.022632000036537647,
+            "process_cpu_seconds": 0.0581460000000007
+          },
+          {
+            "wall_seconds": 0.020232750102877617,
+            "process_cpu_seconds": 0.05391300000000143
+          },
+          {
+            "wall_seconds": 0.021794874919578433,
+            "process_cpu_seconds": 0.05466900000000052
+          }
+        ]
+      },
+      "speedup_vs_sequential": 2.1903907320159464
+    },
+    {
+      "workload": "native_topology",
+      "tasks": 8,
+      "workers": 8,
+      "sequential": {
+        "median_seconds": 0.04773929202929139,
+        "median_cpu_per_wall": 0.9916752169386314,
+        "samples": [
+          {
+            "wall_seconds": 0.04810445918701589,
+            "process_cpu_seconds": 0.047703999999999525
+          },
+          {
+            "wall_seconds": 0.04708450008183718,
+            "process_cpu_seconds": 0.04687299999999972
+          },
+          {
+            "wall_seconds": 0.04773929202929139,
+            "process_cpu_seconds": 0.047077999999999065
+          }
+        ]
+      },
+      "thread_pool": {
+        "median_seconds": 0.019001875072717667,
+        "median_cpu_per_wall": 3.0299124888664655,
+        "samples": [
+          {
+            "wall_seconds": 0.020213125040754676,
+            "process_cpu_seconds": 0.061244000000002075
+          },
+          {
+            "wall_seconds": 0.019001875072717667,
+            "process_cpu_seconds": 0.057648000000000366
+          },
+          {
+            "wall_seconds": 0.018739750143140554,
+            "process_cpu_seconds": 0.056320000000003034
+          }
+        ]
+      },
+      "traversal": {
+        "median_seconds": 0.021805499913170934,
+        "median_cpu_per_wall": 2.71138016717937,
+        "samples": [
+          {
+            "wall_seconds": 0.022000957978889346,
+            "process_cpu_seconds": 0.05786700000000167
+          },
+          {
+            "wall_seconds": 0.02015970880165696,
+            "process_cpu_seconds": 0.05550999999999817
+          },
+          {
+            "wall_seconds": 0.021805499913170934,
+            "process_cpu_seconds": 0.059123000000003145
+          }
+        ]
+      },
+      "speedup_vs_sequential": 2.189323437636757
+    }
+  ]
+}

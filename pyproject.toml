@@ -4,7 +4,7 @@ build-backend = "maturin"
 
 [project]
 name = "traversal"
-version = "0.1.0"
+version = "0.2.0"
 description = "Concurrent DAG execution for Python, powered by Rust"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -28,6 +28,7 @@ python-source = "python"
 module-name = "traversal._native"
 include = [
   { path = "docs/**/*.md", format = "sdist" },
+  { path = "docs/benchmarks/*.json", format = "sdist" },
   { path = "tests/*.py", format = "sdist" },
   { path = "examples/*.py", format = "sdist" },
   { path = "benchmarks/*.py", format = "sdist" },

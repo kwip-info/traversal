@@ -1,6 +1,6 @@
 # Traversal execution contract
 
-Status: layers 1–6 implemented and released as 0.1.0. Owner: Trevor Ewert / KWIP LLC.
+Status: layers 1–6 plus 0.2.0 free-threading qualification. Owner: Trevor Ewert / KWIP LLC.
 
 ## Scope
 
@@ -34,8 +34,17 @@ telemetry, calendar scheduler, connector catalog, distributed workers, or UI.
   threads may finish and perform effects. Never report a running thread as stopped.
 - Python exceptions retain meaningful source traceback information. Internal
   invalid transitions return errors; they must not corrupt dependency counts.
-- A Rust scheduler does not bypass the GIL for Python task bodies. Use async for
-  awaitable work, threads for blocking I/O; process executors are deferred.
+- Regular CPython retains the GIL for Python task bodies. Free-threaded CPython
+  3.14t can run independent synchronous Python tasks on multiple cores when the
+  GIL remains disabled. Async CPU work still blocks its event loop. Process
+  executors are deferred.
+- A compiled Plan supports concurrent runs with independent scheduler state,
+  outputs, failures, and copied contextvars. Construct Graphs on one thread;
+  do not mutate Plan configuration, task closures, or shared inputs during runs.
+  History uses operation-local SQLite connections; writes can serialize.
+- Bulk Rust topology compilation, selection, order copying, and run initialization
+  detach from Python using owned Rust data. Tiny state transitions remain attached;
+  one Python coordinator owns each run's mutable native scheduler.
 
 ## History and reuse
 
